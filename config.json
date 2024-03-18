@@ -1,0 +1,16 @@
+{
+  "sources" : [
+    { "name": "sensor 1", "type": "bmp180" },
+    { "name": "sensor 2", "type": "dht22" }
+  ],
+
+  "listeners" : [
+    { "name": "console", "type": "console"},
+    { "name": "log", "type": "log", "file": "log.txt"}
+  ],
+
+  "routes" : [
+    ["sensor 1",  "console"],
+    ["sensor 2",  "console"]
+  ]
+}
