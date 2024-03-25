@@ -1,7 +1,7 @@
 {
   "sources" : [
     { "name": "sensor 1", "type": "bmp180" },
-    { "name": "sensor 2", "type": "dht22" }
+    { "name": "sensor 2", "type": "bmp180" }
   ],
 
   "listeners" : [
@@ -10,7 +10,7 @@
   ],
 
   "routes" : [
-    ["sensor 1",  "console"],
-    ["sensor 2",  "console"]
+    ["sensor 1",  "console", "log"],
+    ["sensor 2",  "log", "console"]
   ]
 }
