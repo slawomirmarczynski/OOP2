@@ -38,7 +38,7 @@ public class Configuration {
 
     final static String DEFAULT_FILE_NAME = "config.json";
 
-    private Map<String, ArrayList<?>> config;
+    private Map<String, List<?>> config;
 
     public Configuration() {
         try (FileReader reader = new FileReader(DEFAULT_FILE_NAME)) {
