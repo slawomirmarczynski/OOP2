@@ -32,7 +32,7 @@ import java.util.Set;
 public abstract class Component {
 
     private final String name;
-    Set<Component> observers = new HashSet<>();
+    private Set<Component> observers = new HashSet<>();
 
     public Component(String name) {
         this.name = name;
@@ -42,7 +42,7 @@ public abstract class Component {
         return name;
     }
 
-    void addObserver(Component component) {
+    public void addObserver(Component component) {
         observers.add(component);
     }
 
@@ -50,7 +50,7 @@ public abstract class Component {
 //        observers.remove(component);
 //    }
 
-    void removeAllObservers() {
+    public void removeAllObservers() {
         observers.clear();
     }
 
