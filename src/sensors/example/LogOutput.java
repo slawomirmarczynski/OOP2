@@ -26,42 +26,27 @@
 
 package sensors.example;
 
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class Factory {
-
-    public Map<String, Component> createComponentsMap(List<?> objectsConfiguration) {
-        Map<String, Component> map = new ConcurrentHashMap<>(); // bezpieczniej
-        for (Object objectConfiguration : objectsConfiguration) {
-            try {
-                Component Component = createObject(objectConfiguration);
-                String name = Component.getName();
-                if (map.containsKey(name)) {
-                    // Mamy problem, coś o takiej nazwie już mamy.
-                    System.out.println("Nie można utworzyć " + name);
-                } else {
-                    map.put(name, Component);
-                }
-            } catch (RuntimeException exception) {
-                // logika odpowiedzialna za informowanie o niepowodzeniach
-            }
-        }
-        return map;
+public class LogOutput extends Component {
+    public LogOutput(Map<String, Object> parameters) {
+        super((String) parameters.get("name"));
     }
 
-    public Component createObject(Object objectConfiguration) {
-        Map<String, Object> parameters = (Map<String, Object>) objectConfiguration;
-        String type = (String) parameters.get("type");
-        if (type.equals("bmp180"))
-            return new BMP180Sensor(parameters);
-        else if (type.equals("console")) {
-            return new ConsoleOutput(parameters);
+    @Override
+    public void update(Component source) {
+        String name = source.getName();
+        Object result = source.getValue();
+        System.out.print("Do PLIKU !!! --> Dane z " + name + ":");
+        if (result instanceof Double) {
+            System.out.println(" " + result);
         }
-        else if (type.equals("log")) {
-            return new LogOutput(parameters);
+        if (result instanceof Double[]) {
+            Double[] array = (Double[]) result;
+            for (Double element : array) {
+                System.out.print(" " + element + ",");
+            }
+            System.out.println();
         }
-        return null;
     }
 }
