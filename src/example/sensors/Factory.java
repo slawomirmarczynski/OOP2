@@ -30,31 +30,66 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// Klasa Factory służy do tworzenia obiektów Device, Receiver i Route na podstawie konfiguracji.
+/**
+ * Klasa Factory służy do tworzenia obiektów Device, Receiver i Route
+ * na podstawie konfiguracji. Nie jest to pełne zastosowanie wzorca fabryki
+ * abstrakcyjnej (bo mamy tylko jedną fabrykę i to nie-abstrakcyjną),
+ * ale dość łatwo (w razie potrzeby) można to rozwinąć do fabryki abstrakcyjnej.
+ */
 public class Factory {
 
     // Konfiguracja, na podstawie której będą tworzone obiekty.
+    // Co do zasady, jeżeli potrzebna byłaby inna konfiguracja, to po prostu
+    // należy stworzyć inną fabrykę.
+    //
     private final Configuration configuration;
 
-    // Konstruktor klasy Factory.
+    /**
+     * Konstruktor klasy Factory.
+     *
+     * @param configuration obiekt klasy Configuration, który dostarcza
+     *                      informacji o tym jakie obiekty stworzyć. Jest to
+     *                      złożona struktura map i list, taka jaką tworzy
+     *                      biblioteka GSON po przeczytaniu pliku JSON.
+     */
     public Factory(Configuration configuration) {
         this.configuration = configuration;
     }
 
-    // Metoda tworząca listę obiektów klasy Device na podstawie konfiguracji.
+    /**
+     * Metoda tworząca listę obiektów klasy Device na podstawie konfiguracji.
+     * <p>
+     * Są tworzone obiekty Device, przy ich tworzeniu powstają obiekty Sensor.
+     * Utworzone obiekty Device są dopisywane do listy, która jest zwracana.
+     *
+     * @return lista obiektów Device.
+     */
     public List<Device> createDevices() {
         List<Device> list = new ArrayList<>();
         List<?> devicesConfigurations = configuration.getDevices();
         for (var deviceConfiguration : devicesConfigurations) {
+
             // Tworzenie obiektu Device na podstawie konfiguracji.
+            //
             Device device = createDevice(deviceConfiguration);
+
             // Dodanie obiektu do listy.
             list.add(device);
         }
         return list;
     }
 
-    // Metoda tworząca listę obiektów klasy Receiver na podstawie konfiguracji.
+    /**
+     * Metoda tworząca listę obiektów klasy Receiver na podstawie konfiguracji.
+     * <p>
+     * Najpierw każdy obiekt jest tworzony jako taki, potem jest dopisywany do
+     * listy. Metoda ta jest w istocie bardzo podobna do createDevices(),
+     * ale ponieważ Java jest taka jaka jest, to prościej (tym razem) było
+     * powielić kod naruszając zasadę DRY, niż męczyć się ze stworzeniem
+     * jednej-metody-która-potrafi-wszystko.
+     *
+     * @return lista obiektów Receivers.
+     */
     public List<Receiver> createReceivers() {
         List<Receiver> list = new ArrayList<>();
         List<?> receiversConfigurations = configuration.getReceivers();
@@ -67,42 +102,76 @@ public class Factory {
         return list;
     }
 
-    // Metoda tworząca listę obiektów klasy Route na podstawie konfiguracji.
+    /**
+     * Metoda tworząca listę obiektów klasy Route na podstawie konfiguracji.
+     * <p>
+     * Tworzone są obiekty Route i dopisywane do (będącej rezultatem) listy.
+     * Obiekty Route (używamy nie klasy ale rekordu, taki wynalazek od Java 11)
+     * jedynie opisują jak połączenie ma być zestawione. Utworzenie obiektu
+     * Route nie jest utworzeniem połączenia - tzn. nie tworzy żadnego
+     * mechanizmu przekazywania danych od nadawców (sensorów) do odbiorców.
+     *
+     * @return lista opisująca jak zestawić połączenia pomiędzy nadawcami
+     * a odbiorcami danych.
+     */
     public List<Route> createRoutes() {
         List<Route> list = new ArrayList<>();
         List<List<String>> routesConfigurations = configuration.getRoutes();
         for (List<String> routeConfiguration : routesConfigurations) {
+
             // Tworzenie obiektu Route na podstawie konfiguracji.
+            //
             String deviceName = routeConfiguration.get(0);
             String sensorName = routeConfiguration.get(1);
             String receiverName = routeConfiguration.get(2);
             Route route = new Route(deviceName, sensorName, receiverName);
+
             // Dodanie obiektu do listy.
+            //
             list.add(route);
         }
         return list;
     }
 
-    // Metoda tworząca obiekt klasy Device na podstawie opcji.
+    /**
+     * Metoda tworząca jeden obiekt klasy Device na podstawie opcji.
+     *
+     * @param options wyodrębnione opcje związane z jednym konkretnym
+     *               urządzeniem.
+     * @return utworzony obiekt klasy Device.
+     */
     private Device createDevice(Object options) {
-        var optionsAsMap = (Map<String, ?>)options;
+        var optionsAsMap = (Map<String, ?>) options;
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
         if (type.equals("dev4b")) {
+
             // Tworzenie obiektu klasy Dev4b.
+            //
             return new Dev4b(name, options);
         } else {
             // W przypadku nieznanego typu urządzenia, rzucany jest wyjątek.
+            //
             throw new RuntimeException("nieznany typ urządzenia " + type);
         }
     }
 
-    // Metoda tworząca obiekt klasy Receiver na podstawie opcji.
+    /**
+     * Metoda tworząca jeden obiekt klasy Receiver na podstawie opcji.
+     *
+     * @param options wyodrębnione opcje związane z jednym konkretnym
+     *               odbiorcą danych.
+     * @return utworzony obiekt klasy Receiver.
+     */
     private Receiver createReceiver(Object options) {
-        var optionsAsMap = (Map<String, ?>)options;
+        var optionsAsMap = (Map<String, ?>) options;
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
-        // Tworzenie obiektu klasy ConsoleOutput.
+
+        // Prowizoryczne rozwiązanie - tworzenie obiektu klasy ConsoleOutput.
+        // @todo: tworzenie różnych obiektów, odpowiednio do danych
+        //        z konfiguracji
+        //
         return new ConsoleOutput(name, options);
     }
 }
