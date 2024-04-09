@@ -32,40 +32,79 @@ import java.io.FileReader;
 import java.util.List;
 import java.util.Map;
 
-// Klasa Configuration służy do wczytywania konfiguracji z pliku JSON.
+/**
+ * Klasa Configuration służy do wczytywania konfiguracji z pliku JSON.
+ */
 public class Configuration {
 
     // Domyślna nazwa pliku konfiguracyjnego.
+    //
     final static String DEFAULT_FILE_NAME = "config.json";
 
-    // Mapa przechowująca konfigurację.
+    // Mapa przechowująca konfigurację. Zakładamy, że konfiguracja jest zapisana
+    // w pliku w formacie JSON, tak że klucze takie jak "devices", "receivers",
+    // "routes" itp. opisują listy takie jak lista urządzeń, lista odbiorców,
+    // lista ścieżek/połączeń itd. Każda taka lista zawiera (w notacji JSON)
+    // określenie nazwy, typu i ewentualnie innych parametrów obiektu takiego
+    // jak lista urządzeń itd.
+    //
     private final Map<String, List<?>> config;
 
-    // Konstruktor klasy Configuration.
+    /**
+     * Konstruktor klasy Configuration.
+     */
     public Configuration() {
+
         try (FileReader reader = new FileReader(DEFAULT_FILE_NAME)) {
+
+            // Do czytania plików w formacie JSON istnieje wiele bibliotek,
+            // my wybraliśmy GSON od Google (bo jest za darmo i jest od Google).
+            //
             // Utworzenie obiektu Gson do parsowania pliku JSON.
+            //
             Gson gson = new Gson();
+
             // Wczytanie konfiguracji z pliku JSON do mapy.
+            //
             config = gson.fromJson(reader, Map.class);
+
         } catch (Exception exception) {
-            // W przypadku błędu podczas wczytywania konfiguracji, rzucany jest wyjątek.
+
+            // W przypadku problemów podczas wczytywania konfiguracji
+            // rzucany jest wyjątek.
+            //
             throw new RuntimeException("błąd konfiguracji " + DEFAULT_FILE_NAME);
         }
     }
 
-    // Metoda zwracająca listę urządzeń z konfiguracji.
+    /**
+     * Metoda zwracająca listę konfiguracji urządzeń.
+     *
+     * @return lista obiektów, z których każdy reprezentuje konfigurację jednego
+     * urządzenia.
+     */
     public List<?> getDevices() {
         return config.get("devices");
     }
 
-    // Metoda zwracająca listę odbiorników z konfiguracji.
+    /**
+     * Metoda zwracająca listę konfiguracji odbiorców (receivers) danych.
+     *
+     * @return listę obiektów, z których każdy reprezentuje konfigurację jednego
+     * odbiorcy danych.
+     */
     public List<?> getReceivers() {
         return config.get("receivers");
     }
 
-    // Metoda zwracająca listę tras z konfiguracji.
-    public List<List<String>> getRoutes() { //@todo
+    /**
+     * Metoda zwracająca, jako listę, czytelny opis połączeń (routing) pomiędzy
+     * sensorami w urządzeniach a odbiorcami danych.
+     *
+     * @return lista list łańcuchów, z których pierwszy jest nazwą urządzenia,
+     * drugi nazwą sensora, trzeci nazwą odbiorcy.
+     */
+    public List<List<String>> getRoutes() {
         var cfg = config.get("routes");
         return (List<List<String>>) cfg;
     }
