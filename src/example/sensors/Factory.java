@@ -144,9 +144,14 @@ public class Factory {
         var optionsAsMap = (Map<String, ?>) options;
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
-        if (type.equals("dev4b")) {
 
-            // Tworzenie obiektu klasy Dev4b.
+        // @todo: Tu jest prowizorka, to co należy zrobić to dynamicznie
+        //        ładować odpowiednią klasę i następnie tworzyć obiekt tej
+        //        klasy.
+        //
+        if (type.equals("dev4b")) {
+            // Tworzenie obiektu klasy Dev4b. Na razie tylko jedno urządzenie
+            // mamy, będzie więcej, będzie lepiej, będzie to rozbudowane.
             //
             return new Dev4b(name, options);
         } else {
@@ -168,10 +173,20 @@ public class Factory {
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
 
-        // Prowizoryczne rozwiązanie - tworzenie obiektu klasy ConsoleOutput.
-        // @todo: tworzenie różnych obiektów, odpowiednio do danych
-        //        z konfiguracji
+        // @todo: Tu jest prowizorka, to co należy zrobić to dynamicznie
+        //        ładować odpowiednią klasę i następnie tworzyć obiekt tej
+        //        klasy.
         //
-        return new ConsoleOutput(name, options);
+        if (type.equals("console")) {
+            return new ConsoleOutput(name, options);
+        } else {
+            //@todo: to oczywiście trzeba poprawić
+            //
+            // W przypadku nieznanego typu odbiorcy danych...
+            // ... na razie NIE JEST rzucany wyjątek.
+            //
+            // throw new RuntimeException("nieznany typ odbiorcy danych " + type);
+            return new ConsoleOutput(name, options);
+        }
     }
 }
