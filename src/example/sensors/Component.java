@@ -26,14 +26,18 @@
 
 package example.sensors;
 
+// Klasa Component jest klasą abstrakcyjną, która reprezentuje składnik (komponent) systemu.
 public abstract class Component {
 
+    // Nazwa komponentu.
     private final String name;
 
+    // Konstruktor klasy Component.
     public Component(String name) {
         this.name = name;
     }
 
+    // Metoda zwracająca nazwę komponentu.
     public String getName() {
         return name;
     }

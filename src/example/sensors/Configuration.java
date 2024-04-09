@@ -32,32 +32,42 @@ import java.io.FileReader;
 import java.util.List;
 import java.util.Map;
 
-
+// Klasa Configuration służy do wczytywania konfiguracji z pliku JSON.
 public class Configuration {
 
+    // Domyślna nazwa pliku konfiguracyjnego.
     final static String DEFAULT_FILE_NAME = "config.json";
 
+    // Mapa przechowująca konfigurację.
     private final Map<String, List<?>> config;
 
+    // Konstruktor klasy Configuration.
     public Configuration() {
         try (FileReader reader = new FileReader(DEFAULT_FILE_NAME)) {
+            // Utworzenie obiektu Gson do parsowania pliku JSON.
             Gson gson = new Gson();
+            // Wczytanie konfiguracji z pliku JSON do mapy.
             config = gson.fromJson(reader, Map.class);
         } catch (Exception exception) {
+            // W przypadku błędu podczas wczytywania konfiguracji, rzucany jest wyjątek.
             throw new RuntimeException("błąd konfiguracji " + DEFAULT_FILE_NAME);
         }
     }
 
+    // Metoda zwracająca listę urządzeń z konfiguracji.
     public List<?> getDevices() {
         return config.get("devices");
     }
 
+    // Metoda zwracająca listę odbiorników z konfiguracji.
     public List<?> getReceivers() {
         return config.get("receivers");
     }
 
+    // Metoda zwracająca listę tras z konfiguracji.
     public List<List<String>> getRoutes() { //@todo
         var cfg = config.get("routes");
         return (List<List<String>>) cfg;
     }
 }
+

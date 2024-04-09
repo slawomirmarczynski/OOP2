@@ -27,14 +27,18 @@
 package example.sensors;
 
 import java.util.List;
-import java.util.Map;
 
+// Klasa Device jest klasą abstrakcyjną, która reprezentuje urządzenie w systemie.
 public abstract class Device extends Component implements Runnable {
 
+    // Konstruktor klasy Device.
     public Device(String deviceName) {
         super(deviceName);
     }
 
+    // Metoda abstrakcyjna do inicjalizacji urządzenia.
     public abstract boolean initialize();
+
+    // Metoda abstrakcyjna zwracająca listę sensorów urządzenia.
     public abstract List<Sensor> getSensors();
 }

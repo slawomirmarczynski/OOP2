@@ -28,14 +28,17 @@ package example.sensors;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+// Klasa Dev4b reprezentuje konkretny typ urządzenia w systemie.
 public class Dev4b extends Device {
 
+    // Lista sensorów przypisanych do tego urządzenia.
     List<Sensor> sensors = new ArrayList<>();
 
+    // Konstruktor klasy Dev4b.
     public Dev4b(String name, Object options) {
         super(name);
+        // Tworzenie sensorów i dodawanie ich do listy.
         Sensor accelerometer = new Adxl345("ADXL345");
         Sensor manometer = new Bmp180p("BMP180P");
         Sensor thermometer = new Bmp180t("BMP180T");
@@ -44,19 +47,22 @@ public class Dev4b extends Device {
         sensors.add(thermometer);
     }
 
+    // Metoda inicjalizująca urządzenie. W tym przypadku zawsze zwraca prawdę.
     @Override
     public boolean initialize() {
         return true;
     }
 
+    // Metoda zwracająca listę sensorów przypisanych do tego urządzenia.
     @Override
     public List<Sensor> getSensors() {
         return sensors;
     }
 
+    // Metoda uruchamiająca urządzenie. Wysyła powiadomienia do wszystkich obserwatorów dla każdego sensora.
     @Override
     public void run() {
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < 100; i++) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

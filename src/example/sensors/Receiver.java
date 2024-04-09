@@ -26,11 +26,14 @@
 
 package example.sensors;
 
+// Klasa Receiver jest klasą abstrakcyjną, która reprezentuje odbiornik w systemie.
 public abstract class Receiver extends Component {
 
+    // Konstruktor klasy Receiver.
     public Receiver(String name) {
         super(name);
     }
 
+    // Metoda abstrakcyjna, która jest wywoływana, gdy sensor, który obserwuje ten odbiornik, ulega zmianie.
     public abstract void update(Sensor sensor);
 }

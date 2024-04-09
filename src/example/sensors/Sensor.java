@@ -29,31 +29,39 @@ package example.sensors;
 import java.util.HashSet;
 import java.util.Set;
 
+// Klasa Sensor jest klasą abstrakcyjną, która reprezentuje sensor w systemie.
 public abstract class Sensor extends Component {
 
+    // Zbiór obserwatorów (odbiorców), którzy są powiadamiani o zmianach w sensorze.
     private final Set<Receiver> observers = new HashSet<>();
 
+    // Konstruktor klasy Sensor.
     public Sensor(String name) {
         super(name);
     }
 
+    // Metoda dodająca odbiorcę do zbioru obserwatorów.
     public void addObserver(Receiver receiver) {
         observers.add(receiver);
     }
 
+    // Metoda usuwająca odbiorcę ze zbioru obserwatorów.
     void removeObserver(Receiver receiver) {
         observers.remove(receiver);
     }
 
+    // Metoda usuwająca wszystkich obserwatorów.
     public void removeAllObservers() {
         observers.clear();
     }
 
+    // Metoda powiadamiająca wszystkich obserwatorów o zmianie.
     public void notifyAllObservers() {
         for (Receiver observer : observers) {
             observer.update(this);
         }
     }
 
+    // Metoda abstrakcyjna zwracająca wartość sensora.
     public abstract Object getValue();
 }
