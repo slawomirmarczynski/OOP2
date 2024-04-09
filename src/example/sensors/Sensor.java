@@ -31,7 +31,7 @@ import java.util.Set;
 
 public abstract class Sensor extends Component {
 
-    private Set<Receiver> observers = new HashSet<>();
+    private final Set<Receiver> observers = new HashSet<>();
 
     public Sensor(String name) {
         super(name);

@@ -37,7 +37,7 @@ public class Configuration {
 
     final static String DEFAULT_FILE_NAME = "config.json";
 
-    private Map<String, List<?>> config;
+    private final Map<String, List<?>> config;
 
     public Configuration() {
         try (FileReader reader = new FileReader(DEFAULT_FILE_NAME)) {
@@ -49,7 +49,7 @@ public class Configuration {
     }
 
     public List<?> getDevices() {
-        return (List<?>) config.get("devices");
+        return config.get("devices");
     }
 
     public List<?> getReceivers() {

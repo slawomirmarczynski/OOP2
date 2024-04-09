@@ -41,8 +41,7 @@ public class LogOutput extends Receiver {
         if (result instanceof Double) {
             System.out.println(" " + result);
         }
-        if (result instanceof Double[]) {
-            Double[] array = (Double[]) result;
+        if (result instanceof Double[] array) {
             for (Double element : array) {
                 System.out.print(" " + element + ",");
             }

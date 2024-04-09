@@ -28,7 +28,11 @@ package example.sensors;
 
 import java.util.List;
 
-
+/**
+ * Klasa Program jest główną klasą programu. Jest ona Runnable, bo aby wyrwać
+ * się z konieczności pisania kolejnych metod statycznych, będziemy tworzyć jej
+ * instancję i wywoływać metodę run().
+ */
 public class Program implements Runnable {
 
     List<Device> devices;
@@ -36,16 +40,23 @@ public class Program implements Runnable {
     List<Route> routes;
 
     /**
-     * Klasa main służy do testowania koncepcji programowania obiektowego
-     * do obsługi sensorów.
+     * Metoda main() tworzy instancję programu i wywołuje metodę run() tej
+     * instancji. W ten sposób unikamy sytuacji, w której w statycznej metodzie
+     * main() wywołujemy statyczne metody klasy, w których możemy wywoływać
+     * tylko statyczne metody itd.
      *
      * @param args argumenty wywołania programu, nie są istotne dla programu.
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         Program program = new Program();
         program.run();
     }
 
+    /**
+     * Pomocnicza metoda generująca opóźnienie bez ryzyka wygenerowania wyjątku.
+     *
+     * @param millis wartość opóźnienia w milisekundach.
+     */
     private static void sleep(long millis) {
         try {
             Thread.sleep(millis);
@@ -53,6 +64,11 @@ public class Program implements Runnable {
         }
     }
 
+    /**
+     * Tworzenie obiektów, takich jak urządzenia i odbiorniki oraz łączniki,
+     * koniecznych do działania programu. Tworzenie urządzeń tworzy także,
+     * automatycznie, sensory będące składnikami urządzeń.
+     */
     private void createObjects() {
         Configuration configuration = new Configuration();
         Factory factory = new Factory(configuration);
@@ -61,8 +77,10 @@ public class Program implements Runnable {
         routes = factory.createRoutes();
     }
 
+    /**
+     * Uruchamianie wszystkich urządzeń, tak aby zbierały i wysyłały dane.
+     */
     private void runDevices() {
-        // Run all devices
         for (Device device : devices) {
             boolean isInitialized = device.initialize();
             if (isInitialized) {
@@ -74,9 +92,16 @@ public class Program implements Runnable {
         }
     }
 
+    /**
+     * Trasowanie dróg komunikacji pomiędzy sensorami i odbiornikami.
+     *
+     */
     private void establishRoutes() {
-        // Establish routes from sensors to receivers
-        // Algorytm jest prosty... ale niezbyt efektywny, można lepiej przez map
+        //
+        // Algorytm jest prosty... ale niezbyt efektywny, można to zrobić
+        // znacznie lepiej (szybciej będzie działać), jednak będzie to wtedy
+        // nieco mniej czytelne. Na razie efektywność nie jest problemem.
+        //
         for (Route route : routes) {
             String deviceName = route.deviceName();
             String sensorName = route.sensorName();

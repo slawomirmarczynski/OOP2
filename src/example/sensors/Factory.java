@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class Factory {
 
-    private Configuration configuration;
+    private final Configuration configuration;
 
     public Factory(Configuration configuration) {
         this.configuration = configuration;
