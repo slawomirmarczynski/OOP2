@@ -29,8 +29,8 @@ package example.sensors;
 import java.util.Map;
 
 public class LogOutput extends Receiver {
-    public LogOutput(Map<String, Object> parameters) {
-        super((String) parameters.get("name"));
+    public LogOutput(String name, Object options) {
+        super(name);
     }
 
     @Override

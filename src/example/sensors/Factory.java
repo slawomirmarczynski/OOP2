@@ -179,14 +179,13 @@ public class Factory {
         //
         if (type.equals("console")) {
             return new ConsoleOutput(name, options);
+        }
+        else if (type.equals("log")) {
+                return new LogOutput(name, options);
         } else {
-            //@todo: to oczywiście trzeba poprawić
+            // W przypadku nieznanego typu odbiorcy danych jest rzucany wyjątek.
             //
-            // W przypadku nieznanego typu odbiorcy danych...
-            // ... na razie NIE JEST rzucany wyjątek.
-            //
-            // throw new RuntimeException("nieznany typ odbiorcy danych " + type);
-            return new ConsoleOutput(name, options);
+            throw new RuntimeException("nieznany typ odbiorcy danych " + type);
         }
     }
 }
