@@ -1,0 +1,15 @@
+{
+  "devices": [
+    {"name": "dev4b", "type": "dev4b"}
+  ],
+
+  "receivers": [
+    {"name": "console", "type": "console"},
+    {"name": "log", "type": "log", "file": "log.txt"}
+  ],
+
+  "routes" : [
+    ["dev4b", "ADXL345",  "console", "log"],
+    ["dev4b", "BMP180T",  "log", "console"]
+  ]
+}
