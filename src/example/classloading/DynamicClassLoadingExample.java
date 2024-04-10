@@ -100,7 +100,6 @@ public class DynamicClassLoadingExample {
             String result = (String) getMethod.invoke(console1);
             System.out.println("Wynik metody getName(): " + result);
 
-
             // Trochę prostsze podejście, zakładając iż mamy superklasę klasy
             // ładowanej dynamicznie, a nie potrzebujemy innych metod niż tych,
             // które są w superklasie (może być nawet abstrakcyjna).
