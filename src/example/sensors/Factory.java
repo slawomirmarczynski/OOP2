@@ -149,7 +149,7 @@ public class Factory {
         //        ładować odpowiednią klasę i następnie tworzyć obiekt tej
         //        klasy.
         //
-        if (type.equals("dev4b")) {
+        if (type.equals("Dev4b")) {
             // Tworzenie obiektu klasy Dev4b. Na razie tylko jedno urządzenie
             // mamy, będzie więcej, będzie lepiej, będzie to rozbudowane.
             //
@@ -177,10 +177,10 @@ public class Factory {
         //        ładować odpowiednią klasę i następnie tworzyć obiekt tej
         //        klasy.
         //
-        if (type.equals("console")) {
+        if (type.equals("ConsoleOutput")) {
             return new ConsoleOutput(name, options);
         }
-        else if (type.equals("log")) {
+        else if (type.equals("LogOutput")) {
                 return new LogOutput(name, options);
         } else {
             // W przypadku nieznanego typu odbiorcy danych jest rzucany wyjątek.

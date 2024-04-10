@@ -29,16 +29,30 @@ package example.sensors;
 import java.util.ArrayList;
 import java.util.List;
 
-// Klasa Dev4b reprezentuje konkretny typ urządzenia w systemie.
+/**
+ * Klasa Dev4b reprezentuje konkretny typ urządzenia w systemie.
+ *
+ * Choć klasa Dev4b to klasa "konkretna", to jest to jedynie atrapa klasy, jaka
+ * rzeczywiście powinna być i współpracować z realnym hardware mającym prawdziwe
+ * czujniki. Ciekawostka: rzeczywiście istnieje coś takiego, nazwanego roboczo
+ * Dev4b, co ma czujniki ADXL345 i BMP180, mikrokontroler ATMega328P i moduł
+ * Bluetooth (popularny HC-06).
+ */
 public class Dev4b extends Device {
 
-    // Lista sensorów przypisanych do tego urządzenia.
-    List<Sensor> sensors = new ArrayList<>();
+    // Lista wszystkich sensorów. Dzięki niej będzie można wykonywać operacje
+    // zbiorczo, na wszystkich sensorach.
+    //
+    private List<Sensor> sensors = new ArrayList<>();
 
     // Konstruktor klasy Dev4b.
     public Dev4b(String name, Object options) {
         super(name);
-        // Tworzenie sensorów i dodawanie ich do listy.
+
+        // Tworzenie sensorów i dodawanie ich do listy. Być może sensowne byłoby
+        // używanie tych zmiennych jeszcze gdzie indziej, poza konstruktorem,
+        // ale na razie jest to niepotrzebne.
+        //
         Sensor accelerometer = new Adxl345("ADXL345");
         Sensor manometer = new Bmp180p("BMP180P");
         Sensor thermometer = new Bmp180t("BMP180T");
@@ -47,28 +61,48 @@ public class Dev4b extends Device {
         sensors.add(thermometer);
     }
 
-    // Metoda inicjalizująca urządzenie. W tym przypadku zawsze zwraca prawdę.
+    /**
+     * Metoda inicjalizująca urządzenie.
+     *
+     * @return w tej wersji programu zawsze zwraca true, docelowo ma zwracać
+     * true jeżeli inicjalizacja zakończy się sukcesem, a false jeżeli nie.
+     */
     @Override
     public boolean initialize() {
         return true;
     }
 
-    // Metoda zwracająca listę sensorów przypisanych do tego urządzenia.
+    /**
+     * Metoda zwracająca listę sensorów przypisanych do tego urządzenia.
+     *
+     * @return
+     */
     @Override
     public List<Sensor> getSensors() {
+        //@todo: Jeżeli zwracamy prywatną listę sensorów, to możliwe jest
+        //       zmodyfikowanie tej listy "z zewnątrz" pomimo tego że jest ona
+        //       prywatna. Programowanie defensywne wymagałoby więc zwracania
+        //       sklonowanej kopii listy, ale i wtedy możliwe byłyby efekty
+        //       uboczne, bo przecież obiekty Sensor służyć mają do manipulacji
+        //       sensorami jako hardware.
         return sensors;
     }
 
-    // Metoda uruchamiająca urządzenie. Wysyła powiadomienia do wszystkich obserwatorów dla każdego sensora.
+    /**
+     * Metoda uruchamiająca urządzenie. Wysyła powiadomienia do wszystkich
+     * obserwatorów dla każdego sensora.
+     */
     @Override
     public void run() {
+        //@todo: obecna wersja to prowizorka, służy jedynie sprawdzeniu
+        //       koncepcji działania mechanizmów przekazywania danych.
         for (int i = 0; i < 100; i++) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
             }
-            for (var s : sensors) {
-                s.notifyAllObservers();
+            for (var sensor : sensors) {
+                sensor.notifyAllObservers();
             }
         }
     }
