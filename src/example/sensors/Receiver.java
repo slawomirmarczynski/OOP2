@@ -26,14 +26,30 @@
 
 package example.sensors;
 
-// Klasa Receiver jest klasą abstrakcyjną, która reprezentuje odbiornik w systemie.
+/**
+ * Klasa Receiver jest klasą abstrakcyjną, która reprezentuje odbiornik danych
+ * w systemie. Jest jednym ze składników wzorca projektowego obserwator,
+ * spełniając w nim rolę obserwatora.
+ */
 public abstract class Receiver extends Component {
 
-    // Konstruktor klasy Receiver.
+    /**
+     * Konstruktor klasy Receiver.
+     *
+     * @param name nazwa odbiornika danych, która potem pozwoli zidentyfikować
+     *             ten odbiornik w trakcie konfiguracji łączenia nadawców danych
+     *             takich jak obiekty Sensor z odbiornikami danych takimi jak
+     *             obiekty Receiver.
+     */
     public Receiver(String name) {
         super(name);
     }
 
-    // Metoda abstrakcyjna, która jest wywoływana, gdy sensor, który obserwuje ten odbiornik, ulega zmianie.
+    /**
+     * Metoda abstrakcyjna, która jest wywoływana, gdy sensor, który obserwuje
+     * ten odbiornik, ulega zmianie.
+     *
+     * @param sensor sensor zgłaszający zmianę.
+     */
     public abstract void update(Sensor sensor);
 }
