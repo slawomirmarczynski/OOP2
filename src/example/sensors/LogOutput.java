@@ -26,8 +26,6 @@
 
 package example.sensors;
 
-import java.util.Map;
-
 public class LogOutput extends Receiver {
     public LogOutput(String name, Object options) {
         super(name);
