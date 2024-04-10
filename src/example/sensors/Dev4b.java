@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * Klasa Dev4b reprezentuje konkretny typ urządzenia w systemie.
- *
+ * <p>
  * Choć klasa Dev4b to klasa "konkretna", to jest to jedynie atrapa klasy, jaka
  * rzeczywiście powinna być i współpracować z realnym hardware mającym prawdziwe
  * czujniki. Ciekawostka: rzeczywiście istnieje coś takiego, nazwanego roboczo
@@ -43,10 +43,10 @@ public class Dev4b extends Device {
     // Lista wszystkich sensorów. Dzięki niej będzie można wykonywać operacje
     // zbiorczo, na wszystkich sensorach.
     //
-    private List<Sensor> sensors = new ArrayList<>();
+    private final List<Sensor> sensors = new ArrayList<>();
 
     // Konstruktor klasy Dev4b.
-    public Dev4b(String name, Object options) {
+    public Dev4b(String name, Object ignoredOptions) {
         super(name);
 
         // Tworzenie sensorów i dodawanie ich do listy. Być może sensowne byłoby
@@ -75,7 +75,7 @@ public class Dev4b extends Device {
     /**
      * Metoda zwracająca listę sensorów przypisanych do tego urządzenia.
      *
-     * @return
+     * @return lista sensorów, tj. obiektów klasy Sensor.
      */
     @Override
     public List<Sensor> getSensors() {
@@ -99,7 +99,7 @@ public class Dev4b extends Device {
         for (int i = 0; i < 100; i++) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
             for (var sensor : sensors) {
                 sensor.notifyAllObservers();
