@@ -35,4 +35,14 @@ public class Bmp180t extends Sensor {
     public Double getValue() {
         return Double.valueOf(293.0);
     }
+
+    @Override
+    public String getPhysicalParameterName() {
+        return "temperatura";
+    }
+
+    @Override
+    public String getPhysicalUnit() {
+        return "°C";
+    }
 }

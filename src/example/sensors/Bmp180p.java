@@ -36,4 +36,14 @@ public class Bmp180p extends Sensor {
     public Double getValue() {
         return Double.valueOf(1013.25);
     }
+
+    @Override
+    public String getPhysicalParameterName() {
+        return "ciśnienie";
+    }
+
+    @Override
+    public String getPhysicalUnit() {
+        return "Pa";
+    }
 }

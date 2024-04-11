@@ -37,4 +37,14 @@ public class Adxl345 extends Sensor {
         return new Double[]{0.1, 0.2, 9.8};
     }
 
+    @Override
+    public String getPhysicalParameterName() {
+        return "przyspieszenie";
+    }
+
+    @Override
+    public String getPhysicalUnit() {
+        return "m/s**2";
+    }
+
 }

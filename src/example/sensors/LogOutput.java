@@ -26,6 +26,9 @@
 
 package example.sensors;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class LogOutput extends Receiver {
     public LogOutput(String name, Object options) {
         super(name);
@@ -33,17 +36,31 @@ public class LogOutput extends Receiver {
 
     @Override
     public void update(Sensor source) {
-        String name = source.getName();
-        Object result = source.getValue();
-        System.out.print("Do PLIKU !!! --> Dane z " + name + ":");
-        if (result instanceof Double) {
-            System.out.println(" " + result);
+        System.out.print("Do PLIKU LOG !!! --> ");
+
+        // Pobieranie nazwy sensora
+        String sensorName = source.getName();
+        // Pobieranie wartości z sensora
+        Object value = source.getValue();
+        // Pobieranie nazwy parametru fizycznego
+        String physicalParameterName = source.getPhysicalParameterName();
+        // Pobieranie jednostki parametru fizycznego
+        String physicalParameterUnit = source.getPhysicalUnit();
+
+        // Wydrukowanie informacji o sensorze
+        System.out.printf("Sensor %s, %s [%s]: ",
+                sensorName, physicalParameterName, physicalParameterUnit);
+        // Jeżeli wartość jest typu Double, wydrukuj ją
+        if (value instanceof Double) {
+            System.out.println(value);
         }
-        if (result instanceof Double[] array) {
-            for (Double element : array) {
-                System.out.print(" " + element + ",");
-            }
-            System.out.println();
+        // Jeżeli wartość jest tablicą typu Double, przekształć ją na łańcuch znaków i wydrukuj
+        else if (value instanceof Double[]) {
+            String string = String.join(", ",
+                    Arrays.stream((Double[]) value)
+                            .map(Object::toString)
+                            .collect(Collectors.toList()));
+            System.out.println(string);
         }
     }
 }

@@ -64,4 +64,8 @@ public abstract class Sensor extends Component {
 
     // Metoda abstrakcyjna zwracająca wartość sensora.
     public abstract Object getValue();
+
+    public abstract String getPhysicalParameterName();
+
+    public abstract String getPhysicalUnit();
 }
