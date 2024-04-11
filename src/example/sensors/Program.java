@@ -60,7 +60,7 @@ public class Program implements Runnable {
     private static void sleep(long millis) {
         try {
             Thread.sleep(millis);
-        } catch (InterruptedException exception) {
+        } catch (InterruptedException ignored) {
         }
     }
 

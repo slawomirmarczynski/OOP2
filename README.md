@@ -16,7 +16,7 @@ poligon do nauki dobrych praktyk.
    Posłuży on do opracowania takiego sposobu ładowania sensorów i odbiorców
    danych, aby uczynić z nich łatwo konfigurowalne pluginy.
 
-1. Uprościliśmy znacznie kod źródłowy poprzez rezygnację z odrębnych klas
+2. Uprościliśmy znacznie kod źródłowy poprzez rezygnację z odrębnych klas
    Sensor i Sink. Połączyliśmy je w jedną klasę Component. Ale okazało się to za
    dużym uproszczeniem. Dlatego wprowadziliśmy więcej klas i klasy abstrakcyjne.
    Mamy abstrakcyjne klasy Device, Sensor i Receiver.
@@ -27,13 +27,13 @@ poligon do nauki dobrych praktyk.
      parametrze fizycznym, takim jak ciśnienie, temperatura, przyspieszenie.
    - Receiver jest czymś, co jest odbiorcą-konsumentem danych.
 
-1. Mamy sposób na powiązanie sensorów z komponentami będącymi odbiorcami danych:
+3. Mamy sposób na powiązanie sensorów z komponentami będącymi odbiorcami danych:
    stosujemy wzorzec obserwator.
 
-1. Dzięki użyciu fabryki obiektów (klasa Factory) oddzieliliśmy tworzenie
+4. Dzięki użyciu fabryki obiektów (klasa Factory) oddzieliliśmy tworzenie
    obiektów od samych obiektów.
 
-1. Mamy skuteczny sposób na czytanie konfiguracji z pliku tekstowego w formacie
+5. Mamy skuteczny sposób na czytanie konfiguracji z pliku tekstowego w formacie
    JSON. Format JSON wydaje się nieco łatwiejszy do zrozumienia i użycia niż XML,
    TOML czy YAML. YAML jest co prawda równie czytelny jak JSON, ale zadecydowała
    łatwa dostępność i prostota użycia biblioteki GSON (do czytania plików)
@@ -47,13 +47,13 @@ Czy mogą to być wektory? Czy powinny być przekazywane informacje o jednostkac
 (np. że pomiary są wyrażane w hektopaskalach)? Czy przekazywać ostatnio
 zmierzone dane, czy też tylko najświeższe? Buforować dane?
 
-1. W jaki sposób dynamicznie ładować - jako plug-iny - klasy obsługujące
+2. W jaki sposób dynamicznie ładować - jako plug-iny - klasy obsługujące
 konkretne sensory? To względnie proste, ale wymaga zapoznania się z class
 loaderem.
 
-1. Testy jednostkowe - to ważne, ale na razie odkładamy na później.
+3. Testy jednostkowe - to ważne, ale na razie odkładamy na później.
 
-1. Zabezpieczenia przed błędnym plikiem config.json - nie ma bowiem gwarancji
+4. Zabezpieczenia przed błędnym plikiem config.json - nie ma bowiem gwarancji
 co do jego zawartości.
 
 ... i oczywiście jeszcze wiele, wiele innych rzeczy.

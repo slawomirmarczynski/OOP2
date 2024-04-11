@@ -43,6 +43,7 @@ import java.net.URLClassLoader;
  */
 public class DynamicClassLoadingExample {
 
+    @SuppressWarnings("CommentedOutCode")
     public static void main(String[] args) throws
             ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException,
@@ -62,6 +63,7 @@ public class DynamicClassLoadingExample {
         String pluginClassName = "example.sensors.ConsoleOutput";
         String pluginDirectory;
         String pluginJarName;
+        //noinspection ConstantValue,UnreachableCode
         if (loadProductionClasses) {
             pluginDirectory = "./out/production";
             pluginJarName = "";
@@ -72,6 +74,7 @@ public class DynamicClassLoadingExample {
 
         File pluginJarFile = new File(pluginDirectory, pluginJarName);
         URL[] url = new URL[]{pluginJarFile.toURI().toURL()};
+
         try(URLClassLoader classLoader = new URLClassLoader(url)) {
 
             // Załaduj klasę o nazwie przechowywanej w zmiennej pluginClassName.

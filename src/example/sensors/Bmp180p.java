@@ -34,7 +34,7 @@ public class Bmp180p extends Sensor {
 
     @Override
     public Double getValue() {
-        return Double.valueOf(1013.25);
+        return 1013.25;
     }
 
     @Override
