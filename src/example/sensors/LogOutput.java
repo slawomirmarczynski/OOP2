@@ -50,17 +50,15 @@ public class LogOutput extends Receiver {
         // Wydrukowanie informacji o sensorze
         System.out.printf("Sensor %s, %s [%s]: ",
                 sensorName, physicalParameterName, physicalParameterUnit);
-        // Jeżeli wartość jest typu Double, wydrukuj ją
+
+        // Jeżeli wartość jest typu Double, to wypisujemy ją. Jeżeli natomiast
+        // wartość jest tablicą typu Double, czyli wektorem, to wypisujemy jej
+        // elementy rozdzielone przecinkami.
+        //
         if (value instanceof Double) {
             System.out.println(value);
-        }
-        // Jeżeli wartość jest tablicą typu Double, przekształć ją na łańcuch znaków i wydrukuj
-        else if (value instanceof Double[]) {
-            String string = String.join(", ",
-                    Arrays.stream((Double[]) value)
-                            .map(Object::toString)
-                            .collect(Collectors.toList()));
-            System.out.println(string);
+        } else if (value instanceof Double[]) {
+            System.out.println(Arrays.toString((Double[]) value));
         }
     }
 }

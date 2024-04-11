@@ -27,41 +27,41 @@
 package example.sensors;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class ConsoleOutput extends Receiver {
 
     // Konstruktor klasy ConsoleOutput
-    public ConsoleOutput(String name, Object options) {
+    public ConsoleOutput(String name, Object ignoredOptions) {
         super(name);
     }
 
     // Metoda update jest wywoływana, gdy sensor (źródło) zaktualizuje swoje dane
     @Override
     public void update(Sensor source) {
-        // Pobieranie nazwy sensora
+
+        // Pobieranie nazwy sensora, wartości z sensora, nazwy parametru
+        // fizycznego, jednostki fizycznej. Nie jest to konieczne, można byłoby
+        // po prostu wywoływać odpowiednie metody (akcesory) wprost tam, gdzie
+        // te dane byłyby potrzebne. Jednak tworząc zmienne (lokalne) ułatwiamy
+        // debugowanie, bo od razu będziemy widzieli ich wartości.
+        //
         String sensorName = source.getName();
-        // Pobieranie wartości z sensora
         Object value = source.getValue();
-        // Pobieranie nazwy parametru fizycznego
         String physicalParameterName = source.getPhysicalParameterName();
-        // Pobieranie jednostki parametru fizycznego
         String physicalParameterUnit = source.getPhysicalUnit();
 
-        // Wydrukowanie informacji o sensorze
-        System.out.printf("Sensor %s, %s [%s]: ",
-                sensorName, physicalParameterName, physicalParameterUnit);
-        // Jeżeli wartość jest typu Double, wydrukuj ją
+        // Wypisanie informacji o sensorze
+        //
+        System.out.printf("Sensor %s, %s [%s]: ", sensorName, physicalParameterName, physicalParameterUnit);
+
+        // Jeżeli wartość jest typu Double, to wypisujemy ją. Jeżeli natomiast
+        // wartość jest tablicą typu Double, czyli wektorem, to wypisujemy jej
+        // elementy rozdzielone przecinkami.
+        //
         if (value instanceof Double) {
             System.out.println(value);
-        }
-        // Jeżeli wartość jest tablicą typu Double, przekształć ją na łańcuch znaków i wydrukuj
-        else if (value instanceof Double[]) {
-            String string = String.join(", ",
-                    Arrays.stream((Double[]) value)
-                            .map(Object::toString)
-                            .collect(Collectors.toList()));
-            System.out.println(string);
+        } else if (value instanceof Double[]) {
+            System.out.println(Arrays.toString((Double[]) value));
         }
     }
 }
