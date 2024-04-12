@@ -33,8 +33,10 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 
 /**
  * Klasa demonstrująca technikę dynamicznego ładowania klasy i dynamicznego
@@ -43,11 +45,7 @@ import java.net.URLClassLoader;
  */
 public class DynamicClassLoadingExample {
 
-    @SuppressWarnings("CommentedOutCode")
-    public static void main(String[] args) throws
-            ClassNotFoundException, NoSuchMethodException,
-            InvocationTargetException, InstantiationException,
-            IllegalAccessException, IOException {
+    public static void main(String[] args) {
 
         // Aby ułatwić sobie życie (nie trzeba budować artefaktu w postaci pliku
         // JAR), możemy dynamicznie ładować klasy także z plików CLASS.
@@ -56,27 +54,49 @@ public class DynamicClassLoadingExample {
         //
         // Nota bene: ./out/production jest odpowiednia dla IntelliJ i Eclipse.
         //
-        boolean loadProductionClasses = true; // dla CLASS, dla JAR ma być false
 
         // Dane, potrzebne do załadowania klasy
         //
         String pluginClassName = "example.sensors.ConsoleOutput";
         String pluginDirectory;
         String pluginJarName;
-        //noinspection ConstantValue,UnreachableCode
-        if (loadProductionClasses) {
-            pluginDirectory = "./out/production";
-            pluginJarName = "";
-        } else {
-            pluginDirectory = "./out/artifacts/OOP2_jar";
-            pluginJarName = "OOP2.jar";
-        }
+        boolean isLoaded;
+
+        pluginDirectory = "out/production";
+        pluginJarName = "";
+        isLoaded = load(pluginDirectory, pluginJarName, pluginClassName);
+        System.out.println("isLoaded: " + isLoaded);
+
+        pluginDirectory = "out/artifacts/OOP2_jar";
+        pluginJarName = "OOP2.jar";
+        isLoaded = load(pluginDirectory, pluginJarName, pluginClassName);
+        System.out.println("isLoaded: " + isLoaded);
+
+        pluginDirectory = "";
+        pluginJarName = "OOP2.jar";
+        isLoaded = load(pluginDirectory, pluginJarName, pluginClassName);
+        System.out.println("isLoaded: " + isLoaded);
+    }
+
+    private static boolean load(String pluginDirectory, String pluginJarName, String pluginClassName) {
 
         File pluginJarFile = new File(pluginDirectory, pluginJarName);
-        URL[] url = new URL[]{pluginJarFile.toURI().toURL()};
 
-        try(URLClassLoader classLoader = new URLClassLoader(url)) {
+        System.out.println();
+        System.out.println("pluginDirectory: " + pluginDirectory);
+        System.out.println("pluginJarName: " + pluginJarName);
+        System.out.println("pluginClassName: " + pluginClassName);
+        System.out.println("pluginJarFile: " + pluginJarFile);
 
+        URL[] url;
+        try {
+            url = new URL[]{pluginJarFile.toURI().toURL()};
+            System.out.println("url: " + Arrays.toString(url));
+        } catch (MalformedURLException exception) {
+            return false;
+        }
+
+        try (URLClassLoader classLoader = new URLClassLoader(url)) {
             // Załaduj klasę o nazwie przechowywanej w zmiennej pluginClassName.
             //
             Class<?> pluginClass = classLoader.loadClass(pluginClassName);
@@ -113,6 +133,12 @@ public class DynamicClassLoadingExample {
             String name2 = "console 2";
             Receiver console2 = (Receiver) constructor.newInstance(name2, null);
             System.out.println("Wynik metody getName(): " + console2.getName());
+        } catch (ClassNotFoundException | NoSuchMethodException |
+                 InvocationTargetException | InstantiationException |
+                 IllegalAccessException | IOException exception) {
+            return false;
         }
+
+        return true;
     }
 }
