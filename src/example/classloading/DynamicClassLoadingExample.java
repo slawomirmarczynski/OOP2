@@ -78,6 +78,7 @@ public class DynamicClassLoadingExample {
         System.out.println("isLoaded: " + isLoaded);
     }
 
+    @SuppressWarnings("CommentedOutCode")
     private static boolean load(String pluginDirectory, String pluginJarName, String pluginClassName) {
 
         File pluginJarFile = new File(pluginDirectory, pluginJarName);
