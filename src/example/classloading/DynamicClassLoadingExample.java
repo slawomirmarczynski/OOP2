@@ -55,25 +55,47 @@ public class DynamicClassLoadingExample {
         // Nota bene: ./out/production jest odpowiednia dla IntelliJ i Eclipse.
         //
 
-        // Dane, potrzebne do załadowania klasy
+        // Dane, potrzebne do załadowania klasy.
         //
         String pluginClassName = "example.sensors.ConsoleOutput";
         String pluginDirectory;
         String pluginJarName;
         boolean isLoaded;
 
+        // Ładowanie klasy z pliku CLASS, dlatego pluginJarName jest pusty.
+        //
+        // Próba załadowania klasy z folderu (ścieżka jest względem katalogu
+        // roboczego) zwykle tworzonego przez IDE... lub, jeżeli to się nie uda,
+        // z jakiegoś standardowego miejsca. Bo class loader, gdy nie może
+        // wykonać swojej roboty, może się zwrócić do nadrzędnego class loadera.
+        //
         pluginDirectory = "out/production";
         pluginJarName = "";
         isLoaded = load(pluginDirectory, pluginJarName, pluginClassName);
         System.out.println("isLoaded: " + isLoaded);
 
+        // Próba załadowania klasy z pliku JAR z folderu z artefaktami.
+        //
         pluginDirectory = "out/artifacts/OOP2_jar";
         pluginJarName = "OOP2.jar";
         isLoaded = load(pluginDirectory, pluginJarName, pluginClassName);
         System.out.println("isLoaded: " + isLoaded);
 
+        // Próba załadowania klasy z pliku JAR tak jakoś, bez podania folderu.
+        //
         pluginDirectory = "";
         pluginJarName = "OOP2.jar";
+        isLoaded = load(pluginDirectory, pluginJarName, pluginClassName);
+        System.out.println("isLoaded: " + isLoaded);
+
+        // Próba załadowania klasy z miejsca, w którym tej klasy (tj. ani pliku
+        // CLASS, ani archiwum JAR z plikami CLASS) po prostu nie ma.
+        // To się może "udać" w tym sensie, że klasa może być już wcześniej
+        // załadowana lub niepowodzenie URLClassLoader poskutkowało znalezieniem
+        // innego sposobu załadowania potrzebnej klasy.
+        //
+        pluginDirectory = "X:/folder-does-not-exist";
+        pluginJarName = "OOP2-file-does-not-exist.jar";
         isLoaded = load(pluginDirectory, pluginJarName, pluginClassName);
         System.out.println("isLoaded: " + isLoaded);
     }
