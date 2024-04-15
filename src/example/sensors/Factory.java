@@ -26,7 +26,21 @@
 
 package example.sensors;
 
+import example.classloading.DynamicPathQueries;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -173,19 +187,38 @@ public class Factory {
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
 
-        // @todo: Tu jest prowizorka, to co należy zrobić to dynamicznie
-        //        ładować odpowiednią klasę i następnie tworzyć obiekt tej
-        //        klasy.
-        //
-        if (type.equals("ConsoleOutput")) {
-            return new ConsoleOutput(name, options);
+        Path pluginDirectory = null;
+        try {
+            pluginDirectory = Paths.get(DynamicPathQueries.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI());
+        } catch (URISyntaxException exception) {
+            throw new RuntimeException("coś nie poszło z URI");
         }
-        else if (type.equals("LogOutput")) {
-                return new LogOutput(name, options);
-        } else {
-            // W przypadku nieznanego typu odbiorcy danych jest rzucany wyjątek.
-            //
-            throw new RuntimeException("nieznany typ odbiorcy danych " + type);
+
+        String pluginJarName = "plugins.jar";
+        File pluginJarFile = new File(
+                pluginDirectory.toString(),
+                pluginJarName);
+        URL[] url;
+        try {
+            url = new URL[]{pluginJarFile.toURI().toURL()};
+            System.out.println("url: " + Arrays.toString(url));
+        } catch (MalformedURLException exception) {
+            throw new RuntimeException("coś nie poszlo z URL");
+        }
+
+        try (URLClassLoader classLoader = new URLClassLoader(url)) {
+            String pluginClassName = "example.sensors." + type;
+            Class<?> pluginClass = classLoader.loadClass(pluginClassName);
+            Constructor<?> constructor = pluginClass.getConstructor(String.class, Object.class);
+            Receiver receiver = (Receiver) constructor.newInstance(name, null);
+            return receiver;
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException | IOException exception) {
+            throw new RuntimeException("coś się skopało...");
         }
     }
 }

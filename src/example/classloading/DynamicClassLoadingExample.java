@@ -101,7 +101,8 @@ public class DynamicClassLoadingExample {
     }
 
     @SuppressWarnings("CommentedOutCode")
-    private static boolean load(String pluginDirectory, String pluginJarName, String pluginClassName) {
+    private static boolean load(String pluginDirectory, String pluginJarName,
+                                String pluginClassName) {
 
         File pluginJarFile = new File(pluginDirectory, pluginJarName);
 
@@ -140,7 +141,7 @@ public class DynamicClassLoadingExample {
             //      String result1 = console1.getName();
             //      System.out.println("Wynik metody getName(): " + result1);
             //
-            String name1 = "console 1";
+            String name1 = "console 1 - to jest napis ćwiczebny";
             Object console1 = constructor.newInstance(name1, null);
             Method getMethod = pluginClass.getMethod("getName");
             String result = (String) getMethod.invoke(console1);
@@ -153,7 +154,7 @@ public class DynamicClassLoadingExample {
             // Dobrym pomysłem byłoby sprawdzenie, czy rzutowanie na Receiver
             // jest wykonalne, czyli użycie instanceof.
             //
-            String name2 = "console 2";
+            String name2 = "console 2 - to też jest napis ćwiczebny";
             Receiver console2 = (Receiver) constructor.newInstance(name2, null);
             System.out.println("Wynik metody getName(): " + console2.getName());
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
