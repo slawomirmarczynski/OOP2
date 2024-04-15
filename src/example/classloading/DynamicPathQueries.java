@@ -45,50 +45,57 @@ public class DynamicPathQueries {
                 .getCodeSource()
                 .getLocation()
                 .toURI());
+        // Pobierz ścieżkę do katalogu nadrzędnego
         Path directoryPath = jarFilePath.getParent();
         System.out.print("Ścieżka do katalogu z plikiem JAR: " + directoryPath);
         if (directoryPath != null) {
-            System.out.println();
+            System.out.println(); // Jeśli ścieżka istnieje, przejdź do nowej linii
         } else {
-            System.out.println(" niepowodzenie, operacja nieudana");
+            System.out.println(" niepowodzenie, operacja nieudana"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
         }
 
+        // Pobierz ścieżkę do bieżącego katalogu roboczego
         String workingDirectory = System.getProperty("user.dir");
         System.out.print("Ścieżka do katalogu roboczego: " + workingDirectory);
         if (workingDirectory != null) {
-            System.out.println();
+            System.out.println(); // Jeśli ścieżka istnieje, przejdź do nowej linii
         } else {
-            System.out.println(" niepowodzenie, operacja nieudana");
+            System.out.println(" niepowodzenie, operacja nieudana"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
         }
 
+        // Pobierz ścieżkę do katalogu domowego użytkownika
         String homeDirectory = System.getProperty("user.home");
         System.out.print("Ścieżka do katalogu domowego: " + homeDirectory);
         if (homeDirectory != null) {
-            System.out.println();
+            System.out.println(); // Jeśli ścieżka istnieje, przejdź do nowej linii
         } else {
-            System.out.println(" niepowodzenie, operacja nieudana");
+            System.out.println(" niepowodzenie, operacja nieudana"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
         }
 
+        // Pobierz ścieżkę do katalogu domowego użytkownika (Windows)
         String userProfile = System.getenv("USERPROFILE");
         System.out.print("Ścieżka do katalogu domowego (Windows): " + userProfile);
         if (userProfile != null) {
-            System.out.println();
+            System.out.println(); // Jeśli ścieżka istnieje, przejdź do nowej linii
         } else {
-            System.out.println(" niepowodzenie, operacja nieudana");
+            System.out.println(" niepowodzenie, operacja nieudana"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
         }
 
+        // Pobierz ścieżkę do katalogu domowego użytkownika
         String propertyString = System.getProperty("user.home");
         if (propertyString != null) {
+            // Pobierz ścieżkę do pulpitu użytkownika
             String desktopPath = Paths.get(propertyString, "Desktop").toString();
             System.out.println("Ścieżka do pulpitu: " + desktopPath);
         } else {
-            System.out.println("Ścieżka do pulpitu: null niepowodzenie");
+            System.out.println("Ścieżka do pulpitu: null niepowodzenie"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
         }
 
         if (workingDirectory != null) {
             boolean directoryExists;
             boolean fileExists;
 
+            // Sprawdź, czy katalog roboczy istnieje
             directoryExists = Files.exists(Path.of(workingDirectory));
             if (directoryExists) {
                 System.out.println("Katalog istnieje: " + workingDirectory);
@@ -96,6 +103,7 @@ public class DynamicPathQueries {
                 System.out.println("Katalog nie istnieje: " + workingDirectory);
             }
 
+            // Sprawdź, czy plik README.md istnieje w katalogu roboczym
             fileExists = Files.exists(Paths.get(workingDirectory, "README.md"));
             if (fileExists) {
                 System.out.println("Plik istnieje: README.md");
@@ -103,6 +111,7 @@ public class DynamicPathQueries {
                 System.out.println("Plik nie istnieje: README.md");
             }
 
+            // Sprawdź, czy plik not.exist istnieje w katalogu roboczym
             fileExists = Files.exists(Paths.get(workingDirectory, "not.exist"));
             if (fileExists) {
                 System.out.println("Plik istnieje: not.exist");
