@@ -26,6 +26,7 @@
 
 package example.classloading;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,67 +36,95 @@ import java.nio.file.Paths;
 /**
  * Klasa demonstrująca techniki pozyskiwania ścieżki do pliku JAR z programem,
  * katalogu/folderu roboczego, katalogu domowego (home) i pulpitu. Demonstrowane
- * są też techniki sprawdzania istnienia folderów i plików.
+ * są też techniki sprawdzania istnienia folderów i plików. Pokazane jest też
+ * pozyskiwanie informacji o wersji Javy i maszynie wirtualnej.
  */
 public class DynamicPathQueries {
     public static void main(String[] args) throws URISyntaxException {
-        // Pobierz ścieżkę do katalogu, w którym znajduje się plik JAR
+
+        // Pobieranie i wyświetlanie nazwy JVM
+        //
+        String javaVmName = System.getProperty("java.vm.name");
+        display("Nazwa JVM", javaVmName);
+
+        // Wersja Javy
+        //
+        String javaVersion = System.getProperty("java.version");
+        display("java.version", javaVersion);
+
+        // Pobieranie JAVA_HOME
+        //
+        String javaHome = System.getenv("JAVA_HOME");
+        display("JAVA_HOME", javaHome);
+
+        // Pobieranie classpath
+        //
+        String classpath = System.getProperty("java.class.path");
+        display("classpath", classpath);
+
+        // Pobieranie ścieżki do folderu z plikami CLASS lub do pliku JAR.
+        // W tym folderze mogą być pliki CLASS, mogą też być foldery z plikami
+        // CLASS (rekurencyjnie, foldery mają nazwy odzwierciedlające nazwy
+        // pakietów). Pliki w JAR w Javie (np. program.jar) są to spakowane
+        // archiwa zawierające pliki CLASS, więc jeżeli program jest w pliku
+        // JAR, to dostaniemy w ten sposób nazwę pliku JAR.
+        //
         Path jarFilePath = Paths.get(DynamicPathQueries.class
                 .getProtectionDomain()
                 .getCodeSource()
                 .getLocation()
                 .toURI());
-        // Pobierz ścieżkę do katalogu nadrzędnego
+        boolean isJar = new File(jarFilePath.toString()).isFile();
+        if (isJar) {
+            System.out.println("Ścieżka do pliku JAR: " + jarFilePath);
+        } else {
+            System.out.println("Ścieżka do folderu z plikami CLASS: " + jarFilePath);
+        }
+
+        // Pobieranie ścieżki do katalogu nadrzędnego, tj. do tego w którym
+        // rezyduje plik JAR (lub folder, gdy to był nie JAR, ale plik CLASS).
+        //
         Path directoryPath = jarFilePath.getParent();
-        System.out.print("Ścieżka do katalogu z plikiem JAR: " + directoryPath);
-        if (directoryPath != null) {
-            System.out.println(); // Jeśli ścieżka istnieje, przejdź do nowej linii
-        } else {
-            System.out.println(" niepowodzenie, operacja nieudana"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
-        }
+        display("Ścieżka do katalogu z programem", directoryPath.toString());
 
-        // Pobierz ścieżkę do bieżącego katalogu roboczego
+        // Pobieranie ścieżki do bieżącego katalogu roboczego.
+        //
         String workingDirectory = System.getProperty("user.dir");
-        System.out.print("Ścieżka do katalogu roboczego: " + workingDirectory);
-        if (workingDirectory != null) {
-            System.out.println(); // Jeśli ścieżka istnieje, przejdź do nowej linii
-        } else {
-            System.out.println(" niepowodzenie, operacja nieudana"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
-        }
+        display("Ścieżka do katalogu roboczego", workingDirectory);
 
-        // Pobierz ścieżkę do katalogu domowego użytkownika
+        // Pobieranie ścieżki do katalogu domowego użytkownika.
+        //
         String homeDirectory = System.getProperty("user.home");
-        System.out.print("Ścieżka do katalogu domowego: " + homeDirectory);
-        if (homeDirectory != null) {
-            System.out.println(); // Jeśli ścieżka istnieje, przejdź do nowej linii
-        } else {
-            System.out.println(" niepowodzenie, operacja nieudana"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
-        }
+        display("Ścieżka do katalogu domowego", homeDirectory);
 
         // Pobierz ścieżkę do katalogu domowego użytkownika (Windows)
+        //
         String userProfile = System.getenv("USERPROFILE");
-        System.out.print("Ścieżka do katalogu domowego (Windows): " + userProfile);
-        if (userProfile != null) {
-            System.out.println(); // Jeśli ścieżka istnieje, przejdź do nowej linii
-        } else {
-            System.out.println(" niepowodzenie, operacja nieudana"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
-        }
+        display("Ścieżka do katalogu domowego (Windows)", userProfile);
 
-        // Pobierz ścieżkę do katalogu domowego użytkownika
+        // Pobieranie ścieżki do pulpitu zaczynamy od folderu domowego.
+        // To rozwiązanie działa dobrze także i w MS Windows (Windows 10),
+        // można je ewentualnie uzupełnić o System.getenv("USERPROFILE"),
+        // patrz wyżej.
+        //
         String propertyString = System.getProperty("user.home");
+        String desktopPath = null;
         if (propertyString != null) {
-            // Pobierz ścieżkę do pulpitu użytkownika
-            String desktopPath = Paths.get(propertyString, "Desktop").toString();
-            System.out.println("Ścieżka do pulpitu: " + desktopPath);
-        } else {
-            System.out.println("Ścieżka do pulpitu: null niepowodzenie"); // Jeśli ścieżka nie istnieje, wyświetl komunikat o błędzie
+            // Określanie ścieżki do pulpitu użytkownika, po prostu folder
+            // Desktop w katalogu użytkownika. Nazwa Desktop jest dobrze
+            // rozumiana przez MS Windows nawet wtedy, gdy jest ona prezentowana
+            // jako Pulpit (czyli w tłumaczeniu na język polski).
+            //
+            desktopPath = Paths.get(propertyString, "Desktop").toString();
         }
+        display("Ścieżka do pulpitu", desktopPath);
 
         if (workingDirectory != null) {
             boolean directoryExists;
             boolean fileExists;
 
-            // Sprawdź, czy katalog roboczy istnieje
+            // Sprawdzanie, czy katalog roboczy istnieje.
+            //
             directoryExists = Files.exists(Path.of(workingDirectory));
             if (directoryExists) {
                 System.out.println("Katalog istnieje: " + workingDirectory);
@@ -103,7 +132,8 @@ public class DynamicPathQueries {
                 System.out.println("Katalog nie istnieje: " + workingDirectory);
             }
 
-            // Sprawdź, czy plik README.md istnieje w katalogu roboczym
+            // Sprawdzanie, czy plik README.md istnieje w katalogu roboczym.
+            //
             fileExists = Files.exists(Paths.get(workingDirectory, "README.md"));
             if (fileExists) {
                 System.out.println("Plik istnieje: README.md");
@@ -111,13 +141,29 @@ public class DynamicPathQueries {
                 System.out.println("Plik nie istnieje: README.md");
             }
 
-            // Sprawdź, czy plik not.exist istnieje w katalogu roboczym
+            // Sprawdzanie, czy plik not.exist istnieje w katalogu roboczym.
+            //
             fileExists = Files.exists(Paths.get(workingDirectory, "not.exist"));
             if (fileExists) {
                 System.out.println("Plik istnieje: not.exist");
             } else {
                 System.out.println("Plik nie istnieje: not.exist");
             }
+        }
+    }
+
+    /**
+     * Wyświetlanie opisanej wartości lub komunikatu o błędzie (jeżeli null).
+     *
+     * @param description opis
+     * @param value       wartość
+     */
+    private static void display(String description, String value) {
+        System.out.print(description + ": " + value);
+        if (value != null) {
+            System.out.println();
+        } else {
+            System.out.println(" niepowodzenie, operacja nieudana");
         }
     }
 }
