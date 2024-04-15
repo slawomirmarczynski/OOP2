@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: example.sensors.Program
+DynamicPathQueries-Class: example.sensors.Program
 Class-Path: gson-2.10.1.jar
 

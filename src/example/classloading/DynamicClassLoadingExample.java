@@ -156,8 +156,7 @@ public class DynamicClassLoadingExample {
             String name2 = "console 2";
             Receiver console2 = (Receiver) constructor.newInstance(name2, null);
             System.out.println("Wynik metody getName(): " + console2.getName());
-        } catch (ClassNotFoundException | NoSuchMethodException |
-                 InvocationTargetException | InstantiationException |
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException | IOException exception) {
             return false;
         }
