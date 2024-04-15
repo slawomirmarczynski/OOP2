@@ -145,8 +145,6 @@ public class Factory {
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
 
-
-
         // @todo: Tu jest prowizorka, to co należy zrobić to dynamicznie
         //        ładować odpowiednią klasę i następnie tworzyć obiekt tej
         //        klasy.

@@ -42,6 +42,10 @@ import java.nio.file.Paths;
 public class DynamicPathQueries {
     public static void main(String[] args) throws URISyntaxException {
 
+        // Odstęp, dla poprawy czytelności wyników.
+        //
+        System.out.println();
+
         // Pobieranie i wyświetlanie nazwy JVM
         //
         String javaVmName = System.getProperty("java.vm.name");
