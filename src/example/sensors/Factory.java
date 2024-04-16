@@ -63,6 +63,13 @@ public class Factory {
     //
     private final Configuration configuration;
 
+    // Potrzebne do procedur weryfikacji podpisów.
+    //
+    private String keyStoreFileName = "myTrustStore.jks"; // w katalogu roboczym
+    private String keyStorePassword = "123456"; // ok, to tylko ćwiczenia
+    private String keyAlias = "myAlias";
+    private KeyStore keyStore;
+
     /**
      * Konstruktor klasy Factory.
      *
@@ -197,7 +204,7 @@ public class Factory {
      * @throws Exception wiele różnych rzeczy może się zdarzyć,
      *                   nie jest gwarantowane że uda się utworzenie obiektu.
      */
-    private static <T> T createPluginComponent(Class<?> classToCreate, String name, String type, Object options)
+    private <T> T createPluginComponent(Class<?> classToCreate, String name, String type, Object options)
             throws Exception {
         //@todo: zabezpieczenie przed iniekcją złośliwego lub niekompatybilnego kodu.
         String packagePrefix = "example.sensors.";
@@ -275,11 +282,7 @@ public class Factory {
      * @param jarFile plik JAR do sprawdzenia.
      * @return true jeżeli podpisy są dobre, false jeżeli są złe.
      */
-    private static boolean isProperlySignedJar(File jarFile) {
-        //@todo: Niektóre operacje trzeba inicjalizować leniwie lub przenieść
-        //       do konstruktora - nie ma sensu wczytywanie za każdym razem
-        //       klucza z magazynu - choć takie prowizoryczne rozwiązanie
-        //       działa.
+    private boolean isProperlySignedJar(File jarFile) {
         try {
             // Wczytywanie magazynu kluczy. Taki magazyn może być w pliku JKS,
             // ale może też być przechowywany w katalogu użytkownika, ogólnie
@@ -288,13 +291,11 @@ public class Factory {
             // zaufanym kluczem nie mając certyfikatu głównego. A więc nie da
             // się - bez magazynu kluczy - użyć kluczy self-signed (darmowych).
             //
-            String keyStoreFileName = "myTrustStore.jks"; // w katalogu roboczym
-            String keyStorePassword = "123456"; // ok, to tylko ćwiczenia
-            String keyAlias = "myAlias";
-            KeyStore keyStore;
-            try (FileInputStream fileInputStream = new FileInputStream(keyStoreFileName)) {
-                keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-                keyStore.load(fileInputStream, keyStorePassword.toCharArray());
+            if (keyStore == null) { // leniwa inicjalizacja
+                try (FileInputStream fileInputStream = new FileInputStream(keyStoreFileName)) {
+                    keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                    keyStore.load(fileInputStream, keyStorePassword.toCharArray());
+                }
             }
 
             JarFile jar = new JarFile(jarFile);
