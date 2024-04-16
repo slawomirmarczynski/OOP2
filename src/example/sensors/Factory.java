@@ -29,10 +29,11 @@ package example.sensors;
 import example.classloading.DynamicPathQueries;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
@@ -94,49 +95,49 @@ public class Factory {
     }
 
     /**
-     * Dynamiczne tworzenie komponentów.
+     * Dynamiczne tworzenie komponentu poprzez dynamiczne załadowanie klasy.
      *
      * @param classToCreate klasa obiektów (np. MyFoo.class).
      * @param name          nazwa obiektu, może być wywnioskowywana z options,
-     *                      ale chcemy aby było widać że jest używana do tworzenia
-     *                      obiektów i mieć ewentualnie mieć co do niej więcej kontroli.
-     * @param type          typ obiektu, może (a może nie?) być wywnioskowana z options,
-     *                      ale chcemy podać ją tu jawnie.
-     * @param options       opcje różne; w options może być i nazwa, i typ zapisane,
-     *                      ale to nie jest używane przez createPluginComponent(),
-     *                      choć konstruktor (ładowany dynamicznie) dostaje całe
-     *                      options, więc coś może z tym zrobić.
-     * @param <T>           klasa, która jest tą klasą, której obiekty są tworzone,
-     *                      będzie to (sub)klasa klasy określonej przez classToCreate.
+     *                      ale chcemy jawnie jej użyć do tworzenia obiektów.
+     * @param type          typ obiektu, może (a może nie?) być wywnioskowana
+     *                      z options, ale ją chcemy podać ją tu jawnie.
+     * @param options       opcje różne; w options może być i nazwa, i typ
+     *                      zapisane, ale nie są używane przez
+     *                      createPluginComponent(), choć konstruktor (ładowany
+     *                      dynamicznie) dostaje całe options.
+     * @param <T>           klasa, która jest tą klasą, której obiekty są
+     *                      tworzone, oczywiście będzie to (sub)klasa klasy
+     *                      zapodanej przez classToCreate.
      * @return utworzony obiekt klasy generycznej T, czyli jakiejś klasy.
+     * @throws Exception wiele różnych rzeczy może się zdarzyć,
+     *                   nie jest gwarantowane że uda się utworzenie obiektu.
      */
-    private static <T> T createPluginComponent(Class<?> classToCreate, String name, String type, Object options) {
+    private static <T> T createPluginComponent(Class<?> classToCreate, String name, String type, Object options)
+            throws Exception {
         //@todo: zabezpieczenie przed iniekcją złośliwego lub niekompatybilnego kodu.
         String packagePrefix = "example.sensors.";
         List<URL> classLoaderURLs = new ArrayList<>();
-        try {
-            List<File> directories = new ArrayList<>();
-            directories.add(getWorkingDirectory());
-            directories.add(getProgramExecutableDirectory());
-            directories.remove(null);
-            int n = directories.size();
-            for (int i = 0; i < n; i++) {
-                File pluginSubdirectory = getPluginSubdirectory(directories.get(i));
-                directories.add(pluginSubdirectory);
-            }
-            directories.remove(null);
 
-            for (File directory : directories) {
-                File[] jarFiles = directory.listFiles((dir, fileName) ->
-                        fileName.endsWith(".jar") | fileName.endsWith(".class"));
-                if (jarFiles != null) {
-                    for (File jarFile : jarFiles) {
-                        classLoaderURLs.add(jarFile.toURI().toURL());
-                    }
+        List<File> directories = new ArrayList<>();
+        directories.add(getWorkingDirectory());
+        directories.add(getProgramExecutableDirectory());
+        directories.remove(null);
+        int n = directories.size();
+        for (int i = 0; i < n; i++) {
+            File pluginSubdirectory = getPluginSubdirectory(directories.get(i));
+            directories.add(pluginSubdirectory);
+        }
+        directories.remove(null);
+
+        for (File directory : directories) {
+            File[] jarFiles = directory.listFiles((dir, fileName) ->
+                    fileName.endsWith(".jar") | fileName.endsWith(".class"));
+            if (jarFiles != null) {
+                for (File jarFile : jarFiles) {
+                    classLoaderURLs.add(jarFile.toURI().toURL());
                 }
             }
-        } catch (URISyntaxException | MalformedURLException exception) {
-            throw new RuntimeException("folder z plugin'ami nie został odnaleziony");
         }
 
         try (URLClassLoader classLoader = new URLClassLoader(classLoaderURLs.toArray(new URL[0]))) {
@@ -154,9 +155,6 @@ public class Factory {
             } else {
                 throw new ClassCastException("Loaded class " + pluginClassName + " cannot be cast to Class<T>");
             }
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException | IOException exception) {
-            throw new RuntimeException("nie udało się stworzyć żądanego obiektu");
         }
     }
 
@@ -245,10 +243,15 @@ public class Factory {
      * @return utworzony obiekt klasy Device.
      */
     private Device createDevice(Object options) {
-        var optionsAsMap = (Map<String, ?>) options;
-        String name = optionsAsMap.get("name").toString();
-        String type = optionsAsMap.get("type").toString();
-        return createPluginComponent(Device.class, name, type, options);
+        try {
+            @SuppressWarnings("unchecked")
+            var optionsAsMap = (Map<String, ?>) options;
+            String name = optionsAsMap.get("name").toString();
+            String type = optionsAsMap.get("type").toString();
+            return createPluginComponent(Device.class, name, type, options);
+        } catch (Exception exception) {
+            throw new RuntimeException("nie można utworzyć urządzenia");
+        }
     }
 
     /**
@@ -265,9 +268,14 @@ public class Factory {
         // tego czym są options. Czyli options ma być dla niej "jakimś obiektem"
         // bez wchodzenia w szczegóły co w nim jest. Patrz też wzorzec memento.
         //
-        var optionsAsMap = (Map<String, ?>) options;
-        String name = optionsAsMap.get("name").toString();
-        String type = optionsAsMap.get("type").toString();
-        return createPluginComponent(Receiver.class, name, type, options);
+        try {
+            @SuppressWarnings("unchecked")
+            var optionsAsMap = (Map<String, ?>) options;
+            String name = optionsAsMap.get("name").toString();
+            String type = optionsAsMap.get("type").toString();
+            return createPluginComponent(Receiver.class, name, type, options);
+        } catch (Exception exception) {
+            throw new RuntimeException("nie można utworzyć odbiornika danych");
+        }
     }
 }

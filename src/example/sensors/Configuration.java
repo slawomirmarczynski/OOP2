@@ -35,6 +35,7 @@ import java.util.Map;
 /**
  * Klasa Configuration służy do wczytywania konfiguracji z pliku JSON.
  */
+@SuppressWarnings("unchecked")
 public class Configuration {
 
     // Domyślna nazwa pliku konfiguracyjnego.
@@ -66,6 +67,7 @@ public class Configuration {
 
             // Wczytanie konfiguracji z pliku JSON do mapy.
             //
+            //noinspection unchecked
             config = gson.fromJson(reader, Map.class);
 
         } catch (Exception exception) {
