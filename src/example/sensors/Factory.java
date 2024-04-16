@@ -29,6 +29,7 @@ package example.sensors;
 import example.classloading.DynamicPathQueries;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,10 +38,16 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
+import java.security.KeyStore;
 import java.security.ProtectionDomain;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * Klasa Factory służy do tworzenia obiektów Device, Receiver i Route
@@ -66,96 +73,6 @@ public class Factory {
      */
     public Factory(Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private static File getProgramExecutableDirectory() throws URISyntaxException {
-        ProtectionDomain domain = DynamicPathQueries.class.getProtectionDomain();
-        CodeSource codeSource = domain.getCodeSource();
-        URL url = codeSource.getLocation();
-        URI uri = url.toURI();
-        Path path = Paths.get(uri);
-        Path parent = path.getParent();
-        return parent.toFile();
-    }
-
-    private static File getWorkingDirectory() {
-        String workingDirectoryString = System.getProperty("user.dir");
-        return new File(workingDirectoryString);
-    }
-
-    private static File getPluginSubdirectory(File file) {
-        String subdirectoryName = "plugins";
-        if (file != null && file.isDirectory()) {
-            File subdirectory = Paths.get(file.toString(), subdirectoryName).toFile();
-            if (subdirectory.exists() && subdirectory.isDirectory()) {
-                return subdirectory;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Dynamiczne tworzenie komponentu poprzez dynamiczne załadowanie klasy.
-     *
-     * @param classToCreate klasa obiektów (np. MyFoo.class).
-     * @param name          nazwa obiektu, może być wywnioskowywana z options,
-     *                      ale chcemy jawnie jej użyć do tworzenia obiektów.
-     * @param type          typ obiektu, może (a może nie?) być wywnioskowana
-     *                      z options, ale ją chcemy podać ją tu jawnie.
-     * @param options       opcje różne; w options może być i nazwa, i typ
-     *                      zapisane, ale nie są używane przez
-     *                      createPluginComponent(), choć konstruktor (ładowany
-     *                      dynamicznie) dostaje całe options.
-     * @param <T>           klasa, która jest tą klasą, której obiekty są
-     *                      tworzone, oczywiście będzie to (sub)klasa klasy
-     *                      zapodanej przez classToCreate.
-     * @return utworzony obiekt klasy generycznej T, czyli jakiejś klasy.
-     * @throws Exception wiele różnych rzeczy może się zdarzyć,
-     *                   nie jest gwarantowane że uda się utworzenie obiektu.
-     */
-    private static <T> T createPluginComponent(Class<?> classToCreate, String name, String type, Object options)
-            throws Exception {
-        //@todo: zabezpieczenie przed iniekcją złośliwego lub niekompatybilnego kodu.
-        String packagePrefix = "example.sensors.";
-        List<URL> classLoaderURLs = new ArrayList<>();
-
-        List<File> directories = new ArrayList<>();
-        directories.add(getWorkingDirectory());
-        directories.add(getProgramExecutableDirectory());
-        directories.remove(null);
-        int n = directories.size();
-        for (int i = 0; i < n; i++) {
-            File pluginSubdirectory = getPluginSubdirectory(directories.get(i));
-            directories.add(pluginSubdirectory);
-        }
-        directories.remove(null);
-
-        for (File directory : directories) {
-            File[] jarFiles = directory.listFiles((dir, fileName) ->
-                    fileName.endsWith(".jar") | fileName.endsWith(".class"));
-            if (jarFiles != null) {
-                for (File jarFile : jarFiles) {
-                    classLoaderURLs.add(jarFile.toURI().toURL());
-                }
-            }
-        }
-
-        try (URLClassLoader classLoader = new URLClassLoader(classLoaderURLs.toArray(new URL[0]))) {
-            String pluginClassName = packagePrefix + type;
-            Class<?> loadedClass = classLoader.loadClass(pluginClassName);
-            if (classToCreate.isAssignableFrom(loadedClass)) {
-                // Kompilator widzi tylko surowe rzutowanie typów i dlatego
-                // generuje ostrzeżenie “unchecked cast”. Nie jest w stanie
-                // zrozumieć, że rzutowanie jest chronione przez poprzednie
-                // sprawdzenie przez isAssignableFrom().
-                @SuppressWarnings("unchecked")
-                Class<T> pluginClass = (Class<T>) loadedClass;
-                Constructor<T> constructor = pluginClass.getConstructor(String.class, Object.class);
-                return constructor.newInstance(name, options);
-            } else {
-                throw new ClassCastException("Loaded class " + pluginClassName + " cannot be cast to Class<T>");
-            }
-        }
     }
 
     /**
@@ -235,6 +152,171 @@ public class Factory {
         return list;
     }
 
+    private static File getProgramExecutableDirectory() throws URISyntaxException {
+        ProtectionDomain domain = DynamicPathQueries.class.getProtectionDomain();
+        CodeSource codeSource = domain.getCodeSource();
+        URL url = codeSource.getLocation();
+        URI uri = url.toURI();
+        Path path = Paths.get(uri);
+        Path parent = path.getParent();
+        return parent.toFile();
+    }
+
+    private static File getWorkingDirectory() {
+        String workingDirectoryString = System.getProperty("user.dir");
+        return new File(workingDirectoryString);
+    }
+
+    private static File getPluginSubdirectory(File file) {
+        String subdirectoryName = "plugins";
+        if (file != null && file.isDirectory()) {
+            File subdirectory = Paths.get(file.toString(), subdirectoryName).toFile();
+            if (subdirectory.exists() && subdirectory.isDirectory()) {
+                return subdirectory;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Dynamiczne tworzenie komponentu poprzez dynamiczne załadowanie klasy.
+     *
+     * @param classToCreate klasa obiektów (np. MyFoo.class).
+     * @param name          nazwa obiektu, może być wywnioskowywana z options,
+     *                      ale chcemy jawnie jej użyć do tworzenia obiektów.
+     * @param type          typ obiektu, może (a może nie?) być wywnioskowana
+     *                      z options, ale ją chcemy podać ją tu jawnie.
+     * @param options       opcje różne; w options może być i nazwa, i typ
+     *                      zapisane, ale nie są używane przez
+     *                      createPluginComponent(), choć konstruktor (ładowany
+     *                      dynamicznie) dostaje całe options.
+     * @param <T>           klasa, która jest tą klasą, której obiekty są
+     *                      tworzone, oczywiście będzie to (sub)klasa klasy
+     *                      zapodanej przez classToCreate.
+     * @return utworzony obiekt klasy generycznej T, czyli jakiejś klasy.
+     * @throws Exception wiele różnych rzeczy może się zdarzyć,
+     *                   nie jest gwarantowane że uda się utworzenie obiektu.
+     */
+    private static <T> T createPluginComponent(Class<?> classToCreate, String name, String type, Object options)
+            throws Exception {
+        //@todo: zabezpieczenie przed iniekcją złośliwego lub niekompatybilnego kodu.
+        String packagePrefix = "example.sensors.";
+        List<URL> classLoaderURLs = new ArrayList<>();
+
+        List<File> directories = new ArrayList<>();
+        directories.add(getWorkingDirectory());
+        directories.add(getProgramExecutableDirectory());
+        directories.remove(null);
+        int n = directories.size();
+        for (int i = 0; i < n; i++) {
+            File pluginSubdirectory = getPluginSubdirectory(directories.get(i));
+            directories.add(pluginSubdirectory);
+        }
+        directories.remove(null);
+
+        for (File directory : directories) {
+            File[] jarFiles = directory.listFiles((dir, fileName) ->
+                    fileName.endsWith(".jar") | fileName.endsWith(".class"));
+            if (jarFiles != null) {
+                for (File jarFile : jarFiles) {
+                    if (isProperlySignedJar(jarFile)) {
+                        classLoaderURLs.add(jarFile.toURI().toURL());
+                    }
+                }
+            }
+        }
+
+        try (URLClassLoader classLoader = new URLClassLoader(classLoaderURLs.toArray(new URL[0]))) {
+            String pluginClassName = packagePrefix + type;
+            Class<?> loadedClass = classLoader.loadClass(pluginClassName);
+            if (classToCreate.isAssignableFrom(loadedClass)) {
+                // Kompilator widzi tylko surowe rzutowanie typów i dlatego
+                // generuje ostrzeżenie “unchecked cast”. Nie jest w stanie
+                // zrozumieć, że rzutowanie jest chronione przez poprzednie
+                // sprawdzenie przez isAssignableFrom().
+                @SuppressWarnings("unchecked")
+                Class<T> pluginClass = (Class<T>) loadedClass;
+                Constructor<T> constructor = pluginClass.getConstructor(String.class, Object.class);
+                return constructor.newInstance(name, options);
+            } else {
+                throw new ClassCastException("Loaded class " + pluginClassName + " cannot be cast to Class<T>");
+            }
+        }
+    }
+
+    /**
+     * Metoda sprawdzająca zgodność podpisów cyfrowych plików JAR.
+     * <p>
+     * Klucz do podpisu można, mając zaistalowane JDK, utworzyć poleceniem:
+     * <p>
+     * keytool -genkey -alias myAlias -keyalg rsa -keystore myPrivateKeystore.jks
+     * <p>
+     * Można wtedy podpisywać pliki jar narzędziem jarsigner:
+     * <p>
+     * jarsigner -keystore myPrivateKeystore.jks -signedjar foo_signed.jar foo.jar myAlias
+     * <p>
+     * Teraz wystarczy tylko wyeksportować klucz publiczny z keystore my_private_keystore.jks
+     * i zaimportować do keystore myTrustedStore.jks:
+     * <p>
+     * keytool -exportcert -keystore myPrivateKeystore.jks -alias myAlias -file myKey.pub
+     * keytool -import -keystore myTrustStore.jks -alias myAlias -file myKey.pub
+     * <p>
+     * Oczywiście zamiast myPrivateKeystore, myTrustStore, myAlias i myKey można
+     * użyć innych nazw. Będziemy także proszeni o utworzenie (a potem o podanie)
+     * haseł zabezpieczających magazyny kluczy (keystories). Hasło "123456"
+     * użyte poniżej, jest oczywiście tylko dla przykładu - w realnym przypadku
+     * potrzebne jest znacznie mocniejsze hasło! Należy też pamiętać, że klucz
+     * publiczny można co do zasady swobodnie udostępniać każdemu, podobnie
+     * myTrustStore.jks (gdy zawiera wyłącznie zaimportowany klucz publiczny),
+     * natomiast myPrivateKeystore powinien być nie udostępniany w żaden sposób.
+     * <p>
+     * Więcej wskazówek jest w dokumentacji narzędzi keytool i jarsigner.
+     *
+     * @param jarFile plik JAR do sprawdzenia.
+     * @return true jeżeli podpisy są dobre, false jeżeli są złe.
+     */
+    private static boolean isProperlySignedJar(File jarFile) {
+        //@todo: Niektóre operacje trzeba inicjalizować leniwie lub przenieść
+        //       do konstruktora - nie ma sensu wczytywanie za każdym razem
+        //       klucza z magazynu - choć takie prowizoryczne rozwiązanie
+        //       działa.
+        try {
+            // Wczytywanie magazynu kluczy. Taki magazyn może być w pliku JKS,
+            // ale może też być przechowywany w katalogu użytkownika, ogólnie
+            // możliwe jest także że klucz jest w osobnym pliku. Rzecz w tym,
+            // że jeżeli klucz nie jest w magazynie kluczy, to nie może być
+            // zaufanym kluczem nie mając certyfikatu głównego. A więc nie da
+            // się - bez magazynu kluczy - użyć kluczy self-signed (darmowych).
+            //
+            String keyStoreFileName = "myTrustStore.jks"; // w katalogu roboczym
+            String keyStorePassword = "123456"; // ok, to tylko ćwiczenia
+            String keyAlias = "myAlias";
+            KeyStore keyStore;
+            try (FileInputStream fileInputStream = new FileInputStream(keyStoreFileName)) {
+                keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                keyStore.load(fileInputStream, keyStorePassword.toCharArray());
+            }
+
+            JarFile jar = new JarFile(jarFile);
+            for (JarEntry entry : Collections.list(jar.entries())) {
+                if (entry.isDirectory() == false) { // Przetwarzane są tylko nie-katalogi
+                    jar.getInputStream(entry).readAllBytes();
+                    Certificate[] certificates = entry.getCertificates();
+                    if (certificates == null) {
+                        return false; // nie ma podpisu? traktujemy to jako zły podpis
+                    }
+                    for (Certificate certificate : certificates) {
+                        PublicKey publicKey = keyStore.getCertificate(keyAlias).getPublicKey();
+                        certificate.verify(publicKey); // zły podpis jest zgłaszany jako wyjątek
+                    }
+                }
+            }
+            return true; // wszystkie podpisy były zgodne, więc jesteśmy tu gdzie jesteśmy
+        } catch (Exception exception) {
+            return false; // zły podpis lub coś poszło nie tak, z ostrożności dajemy false
+        }
+    }
+
     /**
      * Metoda tworząca jeden obiekt klasy Device na podstawie opcji.
      *
@@ -279,3 +361,4 @@ public class Factory {
         }
     }
 }
+
