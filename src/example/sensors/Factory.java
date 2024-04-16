@@ -254,19 +254,20 @@ public class Factory {
     /**
      * Metoda sprawdzająca zgodność podpisów cyfrowych plików JAR.
      * <p>
-     * Klucz do podpisu można, mając zaistalowane JDK, utworzyć poleceniem:
+     * Klucz do podpisu (ważny ponad 1000 lat) można, mając zaistalowane JDK, utworzyć poleceniem:
      * <p>
-     * keytool -genkey -alias myAlias -keyalg rsa -keystore myPrivateKeystore.jks
+     * keytool -genkey -alias myAlias -keyalg rsa -validity 366000 -keystore myPrivateKeystore.jks -storepass 123456
      * <p>
-     * Można wtedy podpisywać pliki jar narzędziem jarsigner:
+     * Można, mając ten klucz, podpisywać pliki jar narzędziem jarsigner:
      * <p>
-     * jarsigner -keystore myPrivateKeystore.jks -signedjar foo_signed.jar foo.jar myAlias
+     * jarsigner -keystore myPrivateKeystore.jks -signedjar foo_signed.jar foo.jar myAlias -storepass 123456
      * <p>
-     * Teraz wystarczy tylko wyeksportować klucz publiczny z keystore my_private_keystore.jks
-     * i zaimportować do keystore myTrustedStore.jks:
+     * Teraz wystarczy tylko wyeksportować klucz publiczny z keystore myPrivateKeystore.jks
+     * i zaimportować do keystore myTrustedStore.jks (hasła mogą być oczywiście zupełnie różne,
+     * a nawet powinny być różne, tu są jednakowe 123456):
      * <p>
-     * keytool -exportcert -keystore myPrivateKeystore.jks -alias myAlias -file myKey.pub
-     * keytool -import -keystore myTrustStore.jks -alias myAlias -file myKey.pub
+     * keytool -exportcert -keystore myPrivateKeystore.jks -alias myAlias -file myKey.pub -storepass 123456
+     * keytool -import -keystore myTrustStore.jks -alias myAlias -file myKey.pub -storepass 123456
      * <p>
      * Oczywiście zamiast myPrivateKeystore, myTrustStore, myAlias i myKey można
      * użyć innych nazw. Będziemy także proszeni o utworzenie (a potem o podanie)
