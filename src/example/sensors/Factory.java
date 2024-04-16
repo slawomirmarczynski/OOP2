@@ -28,6 +28,7 @@ package example.sensors;
 
 import example.classloading.DynamicPathQueries;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -64,6 +65,32 @@ public class Factory {
      */
     public Factory(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    private static File getProgramExecutableDirectory() throws URISyntaxException {
+        ProtectionDomain domain = DynamicPathQueries.class.getProtectionDomain();
+        CodeSource codeSource = domain.getCodeSource();
+        URL url = codeSource.getLocation();
+        URI uri = url.toURI();
+        Path path = Paths.get(uri);
+        Path parent = path.getParent();
+        return parent.toFile();
+    }
+
+    private static File getWorkingDirectory() {
+        String workingDirectoryString = System.getProperty("user.dir");
+        return new File(workingDirectoryString);
+    }
+
+    private static File getPluginSubdirectory(File file) {
+        String subdirectoryName = "plugins";
+        if (file != null && file.isDirectory()) {
+            File subdirectory = Paths.get(file.toString(), subdirectoryName).toFile();
+            if (subdirectory.exists() && subdirectory.isDirectory()) {
+                return subdirectory;
+            }
+        }
+        return null;
     }
 
     /**
@@ -183,49 +210,41 @@ public class Factory {
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
 
-        String pluginSubdirectory = "plugins";
-        String pluginJarName = "plugins.jar";
         String packagePrefix = "example.sensors.";
-
-        int N_URL = 3;
-        URL[] classLoaderURL = new URL[N_URL];
+        List<URL> classLoaderURLs = new ArrayList<>();
         try {
-            String workingDirectory = getWorkingDirectory();
-            String programRunDirectory = getProgramExecutableDirectory();
-            classLoaderURL[0] = composeURL(programRunDirectory, pluginSubdirectory, pluginJarName);
-            classLoaderURL[1] = composeURL(workingDirectory, pluginSubdirectory, pluginJarName);
-            classLoaderURL[2] = composeURL(workingDirectory, "", pluginJarName);
+            List<File> directories = new ArrayList<>();
+            directories.add(getWorkingDirectory());
+            directories.add(getProgramExecutableDirectory());
+            directories.remove(null);
+            int n = directories.size();
+            for (int i = 0; i < n; i++) {
+                File pluginSubdirectory = getPluginSubdirectory(directories.get(i));
+                directories.add(pluginSubdirectory);
+            }
+            directories.remove(null);
+
+            for (File directory : directories) {
+                File[] jarFiles = directory.listFiles((dir, fileName) ->
+                        fileName.endsWith(".jar") | fileName.endsWith(".class"));
+                if (jarFiles != null) {
+                    for (File jarFile : jarFiles) {
+                        classLoaderURLs.add(jarFile.toURI().toURL());
+                    }
+                }
+            }
         } catch (URISyntaxException | MalformedURLException exception) {
             throw new RuntimeException("folder z plugin'ami nie został odnaleziony");
         }
 
-        try (URLClassLoader classLoader = new URLClassLoader(classLoaderURL)) {
+        try (URLClassLoader classLoader = new URLClassLoader(classLoaderURLs.toArray(new URL[0]))) {
             String pluginClassName = packagePrefix + type;
-            Class<?> pluginClass = classLoader.loadClass(pluginClassName);
-            Constructor<?> constructor = pluginClass.getConstructor(String.class, Object.class);
-            Receiver receiver = (Receiver) constructor.newInstance(name, null);
-            return receiver;
+            Class<? extends Receiver> pluginClass = classLoader.loadClass(pluginClassName).asSubclass(Receiver.class);
+            Constructor<? extends Receiver> constructor = pluginClass.getConstructor(String.class, Object.class);
+            return constructor.newInstance(name, null);
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException | IOException exception) {
             throw new RuntimeException("nie udało się stworzyć żądanego obiektu");
         }
-    }
-
-    private static String getProgramExecutableDirectory() throws URISyntaxException {
-        ProtectionDomain domain = DynamicPathQueries.class.getProtectionDomain();
-        CodeSource codeSource = domain.getCodeSource();
-        URL url = codeSource.getLocation();
-        URI uri = url.toURI();
-        Path path = Paths.get(uri);
-        Path parent = path.getParent();
-        return String.valueOf(parent);
-    }
-
-    private static String getWorkingDirectory() {
-        return System.getProperty("user.dir");
-    }
-
-    private static URL composeURL(String programRunDirectory, String pluginSubdirectory, String pluginJarName) throws MalformedURLException {
-        return Paths.get(programRunDirectory, pluginSubdirectory, pluginJarName).toFile().toURI().toURL();
     }
 }
