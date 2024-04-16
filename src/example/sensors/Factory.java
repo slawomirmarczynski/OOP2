@@ -181,21 +181,7 @@ public class Factory {
         var optionsAsMap = (Map<String, ?>) options;
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
-
-        // @todo: Tu jest prowizorka, to co należy zrobić to dynamicznie
-        //        ładować odpowiednią klasę i następnie tworzyć obiekt tej
-        //        klasy.
-        //
-        if (type.equals("Dev4b")) {
-            // Tworzenie obiektu klasy Dev4b. Na razie tylko jedno urządzenie
-            // mamy, będzie więcej, będzie lepiej, będzie to rozbudowane.
-            //
-            return new Dev4b(name, options);
-        } else {
-            // W przypadku nieznanego typu urządzenia, rzucany jest wyjątek.
-            //
-            throw new RuntimeException("nieznany typ urządzenia " + type);
-        }
+        return createPluginComponent(name, type, options);
     }
 
     /**
@@ -209,7 +195,19 @@ public class Factory {
         var optionsAsMap = (Map<String, ?>) options;
         String name = optionsAsMap.get("name").toString();
         String type = optionsAsMap.get("type").toString();
+        return createPluginComponent(name, type, options);
+    }
 
+    /**
+     * Tworzenie obiektów takich, jakie są dostępne w dynamicznie ładowanych
+     * pluginach. Jaki obiekt tworzymy jest określone parametrem options.
+     *
+     * @param options opcje, muszą być słownikiem Map<String, ?> takim,
+     *                aby można było uzyskać nazwę i typ komponentu przez
+     *                odpowiednio get("name") i get("type").
+     * @return utworzony obiekt jakiegoś typu, jaki to typ decyduje się-samo.
+     */
+    private static <T> T createPluginComponent(String name, String type, Object options) {
         String packagePrefix = "example.sensors.";
         List<URL> classLoaderURLs = new ArrayList<>();
         try {
@@ -239,9 +237,9 @@ public class Factory {
 
         try (URLClassLoader classLoader = new URLClassLoader(classLoaderURLs.toArray(new URL[0]))) {
             String pluginClassName = packagePrefix + type;
-            Class<? extends Receiver> pluginClass = classLoader.loadClass(pluginClassName).asSubclass(Receiver.class);
-            Constructor<? extends Receiver> constructor = pluginClass.getConstructor(String.class, Object.class);
-            return constructor.newInstance(name, null);
+            Class<? extends T> pluginClass = (Class<? extends T>) classLoader.loadClass(pluginClassName);
+            Constructor<? extends T> constructor = pluginClass.getConstructor(String.class, Object.class);
+            return constructor.newInstance(name, options);
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException | IOException exception) {
             throw new RuntimeException("nie udało się stworzyć żądanego obiektu");
