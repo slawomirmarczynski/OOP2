@@ -298,13 +298,21 @@ public class Factory {
                 }
             }
 
+            // Weryfikowanie podpisów zawartości JAR. Zakładamy że każdy plik,
+            // musi mieć prawidłowy i ważny podpis. Nieprawidłowy podpis, lub
+            // brak podpisu, oznaczają że plik JAR nie może być uznany za dobry.
+            //
             JarFile jar = new JarFile(jarFile);
             for (JarEntry entry : Collections.list(jar.entries())) {
                 if (entry.isDirectory() == false) { // Przetwarzane są tylko nie-katalogi
                     jar.getInputStream(entry).readAllBytes();
                     Certificate[] certificates = entry.getCertificates();
                     if (certificates == null) {
-                        return false; // nie ma podpisu? traktujemy to jako zły podpis
+                        // Nie ma podpisu? Traktujemy to jako zły podpis.
+                        // Jest to konieczne aby zapobiec ewentualnej próbie
+                        // obejścia, poprzez podłożenie niepodpisanych plików,
+                        // mechanizmu zabezpieczeń.
+                        return false;
                     }
                     for (Certificate certificate : certificates) {
                         PublicKey publicKey = keyStore.getCertificate(keyAlias).getPublicKey();
