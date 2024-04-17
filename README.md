@@ -1,4 +1,4 @@
-# OOP2
+By# OOP2
 
 ## Cel projektu OOP2
 
@@ -52,10 +52,6 @@ poligon do nauki dobrych praktyk.
 Czy mogą to być wektory? Czy powinny być przekazywane informacje o jednostkach
 (np. że pomiary są wyrażane w hektopaskalach)? Czy przekazywać ostatnio
 zmierzone dane, czy też tylko najświeższe? Buforować dane?
-
-2. W jaki sposób dynamicznie ładować - jako plug-iny - klasy obsługujące
-konkretne sensory? To względnie proste, ale wymaga zapoznania się z class
-loaderem.
 
 3. Testy jednostkowe - to ważne, ale na razie odkładamy na później.
 
