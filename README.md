@@ -12,7 +12,10 @@ poligon do nauki dobrych praktyk.
 
 ## Co już jest zrobione?
 
-1. Dynamiczne ładowanie klas jest już zaimplementowane, choć bez mechanizmów
+1. Dodane jest sprawdzanie podpisów plików JAR (podpisy self-signed tworzone
+   są programami keytool i jarsigner pochodzącymi z JDK).
+
+1. Dynamiczne ładowanie klas jest już zaimplementowane bez mechanizmów
    zabezpieczających.
 
 1. Dodany jest przykład jak pozyskać ścieżki do katalogu roboczego, katalogu
@@ -48,14 +51,13 @@ poligon do nauki dobrych praktyk.
 
 ## Co jest do zrobienia?
 
+1. Graficzny interfejs użytkownika. Być może z możliwością wyboru pomiędzy
+   Swing (SWT?) i JavaFX.
+
 1. Powinniśmy zastanowić się nad tym co mają jako wyniki przekazywać sensory?
 Czy mogą to być wektory? Czy powinny być przekazywane informacje o jednostkach
 (np. że pomiary są wyrażane w hektopaskalach)? Czy przekazywać ostatnio
 zmierzone dane, czy też tylko najświeższe? Buforować dane?
-
-2. W jaki sposób dynamicznie ładować - jako plug-iny - klasy obsługujące
-konkretne sensory? To względnie proste, ale wymaga zapoznania się z class
-loaderem.
 
 3. Testy jednostkowe - to ważne, ale na razie odkładamy na później.
 
