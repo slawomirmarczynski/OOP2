@@ -26,6 +26,7 @@
 
 package example.sensors;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -35,9 +36,9 @@ import java.util.List;
  */
 public class Program implements Runnable {
 
-    List<Device> devices;
-    List<Receiver> receivers;
-    List<Route> routes;
+    private List<Device> devices;
+    private List<Receiver> receivers;
+    private List<Route> routes;
 
     /**
      * Metoda main() tworzy instancję programu i wywołuje metodę run() tej
@@ -123,9 +124,31 @@ public class Program implements Runnable {
 
     @Override
     public void run() {
-        createObjects();
-        establishRoutes();
-        runDevices();
+        try {
+            createGui();
+            createObjects();
+            establishRoutes();
+            runDevices();
+        } catch (Exception exception) {
+            System.err.println("coś poszło nie tak"); //@todo: lepsza obsługa
+        }
         sleep(10_000);
+    }
+
+    private void createGui() throws InterruptedException, InvocationTargetException {
+        GuiFactory guiFactory;
+
+        //@todo: wybieranie jakie gui chcemy mieć - na razie jest tylko Swing.
+
+        guiFactory = SwingGuiFactory.getInstanceSwingGuiFactory();
+        GuiConsole console = guiFactory.createConsole();
+
+        //@todo: tylko do szybkiego sprawdzenia czy działa - usunąć
+        console.clear();
+        for (int i = 0; i < 100; i++) {
+            console.print("hello, przybliżona wartość pi to ");
+            console.println(3.145927);
+        }
+
     }
 }
