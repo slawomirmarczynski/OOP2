@@ -60,4 +60,12 @@ public abstract class Component {
     public String getName() {
         return name;
     }
+
+    /**
+     * Zamknięcie obiektu, czyli mniej więcej to co close() w odniesieniu do
+     * plików (patrz FileStream itp.)
+     */
+    public void close() {
+        // Nic do zrobienia, na razie.
+    }
 }

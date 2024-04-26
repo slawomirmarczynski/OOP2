@@ -26,38 +26,122 @@
 
 package example.sensors;
 
+import com.google.gson.internal.LinkedTreeMap;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+/**
+ * Klasa tworząca obiekty zapewniająca efektywne zapisywanie danych do pliku.
+ * <p>
+ * Obiekty klasy LogOutput są nadal obiektami Receiver (bo klasa LogOutput jest
+ * subklasą klasy Receiver, patrz także zasada Liskov), ale wyspecjalizowanymi
+ * w tym aby zapisywać dane do pliku.
+ */
 public class LogOutput extends Receiver {
-    public LogOutput(String name, Object ignoredOptions) {
+
+    private final String fileName;
+    private PrintWriter printWriter;
+
+    /**
+     * Tworzenie obiektu o podanej nazwie i określonych parametrach.
+     * Te parametry określają nazwę pliku na dane. Nazwa obiektu i nazwa pliku
+     * to dwie zupełnie różne rzeczy.
+     * <p>
+     * Obiekty LogOutput są przeznaczone do tworzenia dynamicznie, więc IDE
+     * takie jak Intellij może nieprawidłowo rozpoznawać iż nie zostały nigdzie
+     * użyte.
+     *
+     * @param name    nazwa obiektu.
+     * @param options opcje, jest to "jakiś obiekt", ale LogOutput je rozpakuje.
+     * @throws RuntimeException jeżeli nie uda się utworzenie obiektu.
+     */
+    public LogOutput(String name, Object options) throws RuntimeException {
         super(name);
+        // Są jakieś problemy z rzutowaniem LinkedTreeMap do TreeMap,
+        // po prostu Google robiąc LinkedTreeMap zrobiło coś inaczej niż
+        // mogło zrobić.
+        //
+        // Ewentualne problemy z rzutowaniem - że parametry będą zupełnie
+        // czymś innym, że nie będzie parametru "file" itp. - spowodują
+        // wyjątek, a to zostanie przechwycone przez try-catch.
+        // Dlatego nie ma zwyczajowego sprawdzania przez instanceof czy
+        // rzutowanie da się przeprowadzić pomyślnie. Bo gdyby nie dało się,
+        // to i tak trzeba byłoby rzucić wyjątkiem.
+        //
+        // Jest tylko odzyskiwana nazwa pliku, samo otwarcie pliku będzie
+        // realizowane przez leniwą inicjalizację.
+        //
+        try {
+            @SuppressWarnings("unchecked")
+            LinkedTreeMap<String, ?> treeMap = (LinkedTreeMap<String, ?>) options;
+            fileName = treeMap.get("file").toString();
+        } catch (Exception exception) {
+            throw new RuntimeException("nie można utworzyć obiektu LogOutput");
+        }
+    }
+
+    /**
+     * Nadpisana metoda close.
+     */
+    @Override
+    public void close() {
+        super.close();
+        printWriter.close();
+        printWriter = null;
     }
 
     @Override
     public void update(Sensor source) {
-        System.out.print("Do PLIKU LOG !!! --> ");
 
-        // Pobieranie nazwy sensora
+        if (printWriter == null) {
+            //noinspection ExtractMethodRecommender
+            try {
+                // Bardzo tradycyjne otwarcie pliku z użyciem java.io, można
+                // byłoby krócej, ale chcemy wymusić kodowanie UTF-8 (nota bene
+                // charset i tak bierzemy z java.nio). Plik pozostanie otwarty
+                // przez cały czas, aby zapewnić maksymalną wydajność.
+                //
+                // @todo: Użycie nio (lub nio2) dałoby możliwość zastosowania
+                //        operacji nieblokujących, a tym samym mogłoby być może
+                //        przyspieszyć działanie programu.
+                //
+                File file = new File(fileName);
+                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(bufferedOutputStream,
+                        StandardCharsets.UTF_8);
+                printWriter = new PrintWriter(outputStreamWriter);
+            } catch (Exception exception) {
+                throw new RuntimeException("niemożliwe utworzenie pliku log");
+            }
+        }
+
+        // Pobieranie nazwy sensora, wartości, nazwy parametru fizycznego
+        // i jednostki parametru fizycznego.
+        //
         String sensorName = source.getName();
-        // Pobieranie wartości z sensora
         Object value = source.getValue();
-        // Pobieranie nazwy parametru fizycznego
         String physicalParameterName = source.getPhysicalParameterName();
-        // Pobieranie jednostki parametru fizycznego
         String physicalParameterUnit = source.getPhysicalUnit();
 
-        // Wydrukowanie informacji o sensorze
-        System.out.printf("Sensor %s, %s [%s]: ",
+        // Wypisanie części informacji do pliku w osobnej linii. Linia ta nie
+        // jest jeszcze zakończona znakiem nowej linii, będzie kontynuowana.
+        //
+        printWriter.printf("Sensor %s, %s [%s]: ",
                 sensorName, physicalParameterName, physicalParameterUnit);
 
+        // Wypisywanie wartości odczytu, w tej samej linii co poprzedni wpis.
+        //
         // Jeżeli wartość jest typu Double, to wypisujemy ją. Jeżeli natomiast
         // wartość jest tablicą typu Double, czyli wektorem, to wypisujemy jej
         // elementy rozdzielone przecinkami.
         //
         if (value instanceof Double) {
-            System.out.println(value);
+            printWriter.println(value);
         } else if (value instanceof Double[]) {
-            System.out.println(Arrays.toString((Double[]) value));
+            printWriter.println(Arrays.toString((Double[]) value));
         }
     }
 }

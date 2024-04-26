@@ -133,6 +133,20 @@ public class Program implements Runnable {
             System.err.println("coś poszło nie tak"); //@todo: lepsza obsługa
         }
         sleep(10_000);
+        closeDevices();
+        closeRecivers();
+    }
+
+    private void closeDevices() {
+        for (Device device : devices) {
+            device.close();
+        }
+    }
+
+    private void closeRecivers() {
+        for (Receiver receiver : receivers) {
+            receiver.close();
+        }
     }
 
     private void createGui() throws InterruptedException, InvocationTargetException {

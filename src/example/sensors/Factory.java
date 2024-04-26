@@ -65,9 +65,9 @@ public class Factory {
 
     // Potrzebne do procedur weryfikacji podpisów.
     //
-    private String keyStoreFileName = "myTrustStore.jks"; // w katalogu roboczym
-    private String keyStorePassword = "123456"; // ok, to tylko ćwiczenia
-    private String keyAlias = "myAlias";
+    private final String keyStoreFileName = "myTrustStore.jks"; // w katalogu roboczym
+    private final String keyStorePassword = "123456"; // ok, to tylko ćwiczenia
+    private final String keyAlias = "myAlias";
     private KeyStore keyStore;
 
     /**
