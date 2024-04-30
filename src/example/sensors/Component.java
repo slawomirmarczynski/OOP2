@@ -63,7 +63,10 @@ public abstract class Component {
 
     /**
      * Zamknięcie obiektu, czyli mniej więcej to co close() w odniesieniu do
-     * plików (patrz FileStream itp.)
+     * plików (patrz FileStream itp.).
+     *
+     * Dlaczego to nie jest metoda abstrakcyjna, ale pusta? Aby redefinicja tej
+     * metody nie była obligatoryjna.
      */
     public void close() {
         // Nic do zrobienia, na razie.

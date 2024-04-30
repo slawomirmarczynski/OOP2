@@ -87,6 +87,16 @@ public class LogOutput extends Receiver {
      */
     @Override
     public void close() {
+
+        // Tu mała ciekawostka. Najpierw stosujemy odziedziczone zamykanie.
+        // To jest oczywista ostrożność. Potem jednak zamykamy tylko
+        // printWriter, a przecież "otwieraliśmy" masę strumieni tak jakoś.
+        // No właśnie niezupełnie. Java stosuje wzorzec dekorator w java.io.
+        // Wywołania, takie jak new BufferedStream, nie otwierały pliku,
+        // a tylko dodawały nowe możliwości pracy z nim. Wywołanie close()
+        // obiektu printWriter zamknie wszystko to co jest do zamknięcia
+        // i co było podpięte pod printWriter.
+        //
         super.close();
         printWriter.close();
         printWriter = null;

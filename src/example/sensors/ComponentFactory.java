@@ -55,7 +55,7 @@ import java.util.jar.JarFile;
  * abstrakcyjnej (bo mamy tylko jedną fabrykę i to nie-abstrakcyjną),
  * ale dość łatwo (w razie potrzeby) można to rozwinąć do fabryki abstrakcyjnej.
  */
-public class Factory {
+public class ComponentFactory {
 
     // Konfiguracja, na podstawie której będą tworzone obiekty.
     // Co do zasady, jeżeli potrzebna byłaby inna konfiguracja, to po prostu
@@ -78,7 +78,7 @@ public class Factory {
      *                      złożona struktura map i list, taka jaką tworzy
      *                      biblioteka GSON po przeczytaniu pliku JSON.
      */
-    public Factory(Configuration configuration) {
+    public ComponentFactory(Configuration configuration) {
         this.configuration = configuration;
     }
 
@@ -222,6 +222,23 @@ public class Factory {
         directories.remove(null);
 
         for (File directory : directories) {
+            //@todo: Pozwalamy ładować pliki CLASS, a to może być problem
+            //       z bezpieczeństwem, gdyż nie jest potem sprawdzane czy mają
+            //       one poprawny podpis cyfrowy. Sprawdzanie podpisów cyfrowych
+            //       plików CLASS nie ma sensu, bo wprowadza niepotrzebne
+            //       komplikacje a przecież to samo łatwo osiągnąć dla plików
+            //       JAR. Po prostu lepiej jest spakować CLASS do JAR i podpisać
+            //       - niż trudzić się z wprowadzeniem sprawdzania plików CLASS.
+            //       Ale jeżeli nie pozwolimy ładować plików CLASS możemy mieć
+            //       utrudnienia w trakcie prac nad programem.
+            //       Podsumowujac: prowizorycznie dopuszczamy ".class", docelowo
+            //       należy fileName.endsWith(".class") usunać.
+            //
+            //@todo: Jest rzeczą ciekawą, że można zmienić nazwę pliku JAR,
+            //       na przykład z myplugin.jar na myplugin.plugin (a nawet
+            //       myplugin.jpeg) a i tak URLClassLoader powinien poprawnie
+            //       załadować klasy z takiego pliku.
+            //
             File[] jarFiles = directory.listFiles((dir, fileName) ->
                     fileName.endsWith(".jar") | fileName.endsWith(".class"));
             if (jarFiles != null) {

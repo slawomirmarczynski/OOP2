@@ -72,7 +72,7 @@ public class Program implements Runnable {
      */
     private void createObjects() {
         Configuration configuration = new Configuration();
-        Factory factory = new Factory(configuration);
+        ComponentFactory factory = new ComponentFactory(configuration);
         devices = factory.createDevices();
         receivers = factory.createReceivers();
         routes = factory.createRoutes();
