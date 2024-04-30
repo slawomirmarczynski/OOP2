@@ -1,4 +1,4 @@
-# OOP2
+By# OOP2
 
 ## Cel projektu OOP2
 
