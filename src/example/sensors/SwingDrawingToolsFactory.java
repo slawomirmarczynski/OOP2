@@ -51,4 +51,10 @@ public class SwingDrawingToolsFactory implements DrawingToolsFactory {
             mainWindowFrame.setVisible(true);
         });
     }
+
+    @Override
+    public MyCanvas createCanvas() {
+        MyCanvas myCanvas = new MySwingCanvas(mainWindowFrame);
+        return myCanvas;
+    }
 }

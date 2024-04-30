@@ -150,11 +150,14 @@ public class Program implements Runnable {
     }
 
     private void createGui() throws InterruptedException, InvocationTargetException {
-        DrawingToolsFactory guiFactory;
+        DrawingToolsFactory drawingToolsFactory;
 
         //@todo: wybieranie jakie narzędzia do rysowania chcemy mieć,
         //       na razie jest tylko Swing, ale chcemy mieć wszystko co możliwe.
 
-        guiFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
+        drawingToolsFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
+        MyCanvas canvas = drawingToolsFactory.createCanvas();
+        System.out.println(canvas.getHeight());
+
     }
 }

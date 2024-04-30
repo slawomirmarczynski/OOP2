@@ -26,6 +26,9 @@
 
 package example.sensors;
 
-public interface DrawingToolsFactory {
-    MyCanvas createCanvas();
+public interface MyCanvas {
+    int getWidth();
+    int getHeight();
+    void drawLine(int x1, int y1, int x2, int y2);
+    void repaint();
 }
