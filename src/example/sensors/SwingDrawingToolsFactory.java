@@ -26,7 +26,29 @@
 
 package example.sensors;
 
-interface GuiFactory {
+import javax.swing.*;
+import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 
-    GuiConsole createConsole();
+public class SwingDrawingToolsFactory implements DrawingToolsFactory {
+
+    private static SwingDrawingToolsFactory swingDrawingToolsFactory = null;
+    private JFrame mainWindowFrame;
+
+    public static synchronized SwingDrawingToolsFactory getInstanceDrawingToolsFactory()
+            throws InterruptedException, InvocationTargetException {
+        if (swingDrawingToolsFactory == null) {
+            swingDrawingToolsFactory = new SwingDrawingToolsFactory();
+        }
+        return swingDrawingToolsFactory;
+    }
+
+    private SwingDrawingToolsFactory() throws InterruptedException, InvocationTargetException {
+        EventQueue.invokeAndWait(() -> {
+            mainWindowFrame = new JFrame("Program do obsługi sensorów");
+            mainWindowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            mainWindowFrame.setSize(640, 480);  // 640x480 to historyczna wartość dla PC
+            mainWindowFrame.setVisible(true);
+        });
+    }
 }

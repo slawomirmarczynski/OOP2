@@ -134,7 +134,7 @@ public class Program implements Runnable {
         }
         sleep(10_000);
         closeDevices();
-        closeRecivers();
+        closeReceivers();
     }
 
     private void closeDevices() {
@@ -143,26 +143,18 @@ public class Program implements Runnable {
         }
     }
 
-    private void closeRecivers() {
+    private void closeReceivers() {
         for (Receiver receiver : receivers) {
             receiver.close();
         }
     }
 
     private void createGui() throws InterruptedException, InvocationTargetException {
-        GuiFactory guiFactory;
+        DrawingToolsFactory guiFactory;
 
-        //@todo: wybieranie jakie gui chcemy mieć - na razie jest tylko Swing.
+        //@todo: wybieranie jakie narzędzia do rysowania chcemy mieć,
+        //       na razie jest tylko Swing, ale chcemy mieć wszystko co możliwe.
 
-        guiFactory = SwingGuiFactory.getInstanceSwingGuiFactory();
-        GuiConsole console = guiFactory.createConsole();
-
-        //@todo: tylko do szybkiego sprawdzenia czy działa - usunąć
-        console.clear();
-        for (int i = 0; i < 100; i++) {
-            console.print("hello, przybliżona wartość pi to ");
-            console.println(3.145927);
-        }
-
+        guiFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
     }
 }
