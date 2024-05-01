@@ -40,11 +40,6 @@ import java.util.List;
  */
 public class Dev4b extends Device {
 
-    // Lista wszystkich sensorów. Dzięki niej będzie można wykonywać operacje
-    // zbiorczo, na wszystkich sensorach.
-    //
-    private final List<Sensor> sensors = new ArrayList<>();
-
     // Konstruktor klasy Dev4b.
     public Dev4b(String name, Object ignoredOptions) {
         super(name);
@@ -56,36 +51,9 @@ public class Dev4b extends Device {
         Sensor accelerometer = new Adxl345("ADXL345");
         Sensor manometer = new Bmp180p("BMP180P");
         Sensor thermometer = new Bmp180t("BMP180T");
-        sensors.add(accelerometer);
-        sensors.add(manometer);
-        sensors.add(thermometer);
-    }
-
-    /**
-     * Metoda inicjalizująca urządzenie.
-     *
-     * @return w tej wersji programu zawsze zwraca true, docelowo ma zwracać
-     * true jeżeli inicjalizacja zakończy się sukcesem, a false jeżeli nie.
-     */
-    @Override
-    public boolean initialize() {
-        return true;
-    }
-
-    /**
-     * Metoda zwracająca listę sensorów przypisanych do tego urządzenia.
-     *
-     * @return lista sensorów, tj. obiektów klasy Sensor.
-     */
-    @Override
-    public List<Sensor> getSensors() {
-        //@todo: Jeżeli zwracamy prywatną listę sensorów, to możliwe jest
-        //       zmodyfikowanie tej listy "z zewnątrz" pomimo tego że jest ona
-        //       prywatna. Programowanie defensywne wymagałoby więc zwracania
-        //       sklonowanej kopii listy, ale i wtedy możliwe byłyby efekty
-        //       uboczne, bo przecież obiekty Sensor służyć mają do manipulacji
-        //       sensorami jako hardware.
-        return sensors;
+        addSensor(accelerometer);
+        addSensor(manometer);
+        addSensor(thermometer);
     }
 
     /**
@@ -101,9 +69,7 @@ public class Dev4b extends Device {
                 Thread.sleep(100);
             } catch (InterruptedException ignored) {
             }
-            for (var sensor : sensors) {
-                sensor.notifyAllObservers();
-            }
+            notifyAllSensorsObservers();
         }
     }
 }

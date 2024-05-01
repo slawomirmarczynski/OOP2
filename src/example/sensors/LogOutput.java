@@ -77,6 +77,22 @@ public class LogOutput extends Receiver {
             @SuppressWarnings("unchecked")
             LinkedTreeMap<String, ?> treeMap = (LinkedTreeMap<String, ?>) options;
             fileName = treeMap.get("file").toString();
+            //
+            // Bardzo tradycyjne otwarcie pliku z użyciem java.io, można
+            // byłoby krócej, ale chcemy wymusić kodowanie UTF-8 (nota bene
+            // charset i tak bierzemy z java.nio). Plik pozostanie otwarty
+            // przez cały czas, aby zapewnić maksymalną wydajność.
+            //
+            // @todo: Użycie nio (lub nio2) dałoby możliwość zastosowania
+            //        operacji nieblokujących, a tym samym mogłoby być może
+            //        przyspieszyć działanie programu.
+            //
+            File file = new File(fileName);
+            FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(bufferedOutputStream,
+                    StandardCharsets.UTF_8);
+            printWriter = new PrintWriter(outputStreamWriter);
         } catch (Exception exception) {
             throw new RuntimeException("nie można utworzyć obiektu LogOutput");
         }
@@ -97,35 +113,16 @@ public class LogOutput extends Receiver {
         // obiektu printWriter zamknie wszystko to co jest do zamknięcia
         // i co było podpięte pod printWriter.
         //
-        super.close();
         printWriter.close();
         printWriter = null;
+        super.close();
     }
 
     @Override
     public void update(Sensor source) {
 
         if (printWriter == null) {
-            //noinspection ExtractMethodRecommender
-            try {
-                // Bardzo tradycyjne otwarcie pliku z użyciem java.io, można
-                // byłoby krócej, ale chcemy wymusić kodowanie UTF-8 (nota bene
-                // charset i tak bierzemy z java.nio). Plik pozostanie otwarty
-                // przez cały czas, aby zapewnić maksymalną wydajność.
-                //
-                // @todo: Użycie nio (lub nio2) dałoby możliwość zastosowania
-                //        operacji nieblokujących, a tym samym mogłoby być może
-                //        przyspieszyć działanie programu.
-                //
-                File file = new File(fileName);
-                FileOutputStream fileOutputStream = new FileOutputStream(file, true);
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(bufferedOutputStream,
-                        StandardCharsets.UTF_8);
-                printWriter = new PrintWriter(outputStreamWriter);
-            } catch (Exception exception) {
-                throw new RuntimeException("niemożliwe utworzenie pliku log");
-            }
+            return;
         }
 
         // Pobieranie nazwy sensora, wartości, nazwy parametru fizycznego

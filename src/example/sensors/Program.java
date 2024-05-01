@@ -26,7 +26,6 @@
 
 package example.sensors;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -49,8 +48,30 @@ public class Program implements Runnable {
      * @param args argumenty wywołania programu, nie są istotne dla programu.
      */
     public static void main(String[] args) {
+        //@todo: wybieranie jakie narzędzia do rysowania chcemy mieć,
+        //       na razie jest tylko Swing, ale chcemy mieć wszystko co możliwe.
         Program program = new Program();
         program.run();
+    }
+
+    @Override
+    public void run() {
+        try {
+            createObjects();
+            establishRoutes();
+            runDevices();
+        } catch (Exception exception) {
+            System.err.println("coś poszło nie tak"); //@todo: lepsza obsługa
+        }
+        sleep(10_000);
+        closeDevices();
+        //@todo: W tym miejscu jest problem, bo wywołanie closeDevices() tylko
+        //       teoretycznie coś robi, nie ma pewności czy po wywołaniu tej
+        //       metody wszystkie urządzenia są zatrzymane. A skoro tak, to
+        //       możliwe jest że będą wywoływały odbiorców (receivers), gdy ci
+        //       odbiorcy już przestaną działać/istnieć. Panaceum na to może być
+        //       odłączanie odbiorców w close() danego urządzenia (Device).
+        closeReceivers();
     }
 
     /**
@@ -95,7 +116,6 @@ public class Program implements Runnable {
 
     /**
      * Trasowanie dróg komunikacji pomiędzy sensorami i odbiornikami.
-     *
      */
     private void establishRoutes() {
         //
@@ -122,21 +142,6 @@ public class Program implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
-        try {
-            createGui();
-            createObjects();
-            establishRoutes();
-            runDevices();
-        } catch (Exception exception) {
-            System.err.println("coś poszło nie tak"); //@todo: lepsza obsługa
-        }
-        sleep(10_000);
-        closeDevices();
-        closeReceivers();
-    }
-
     private void closeDevices() {
         for (Device device : devices) {
             device.close();
@@ -147,17 +152,5 @@ public class Program implements Runnable {
         for (Receiver receiver : receivers) {
             receiver.close();
         }
-    }
-
-    private void createGui() throws InterruptedException, InvocationTargetException {
-        DrawingToolsFactory drawingToolsFactory;
-
-        //@todo: wybieranie jakie narzędzia do rysowania chcemy mieć,
-        //       na razie jest tylko Swing, ale chcemy mieć wszystko co możliwe.
-
-        drawingToolsFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
-        MyCanvas canvas = drawingToolsFactory.createCanvas();
-        System.out.println(canvas.getHeight());
-
     }
 }

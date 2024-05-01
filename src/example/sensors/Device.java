@@ -26,19 +26,62 @@
 
 package example.sensors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // Klasa Device jest klasą abstrakcyjną, która reprezentuje urządzenie w systemie.
-public abstract class Device extends Component implements Runnable {
+public abstract class Device extends Component implements Runnable, AutoCloseable {
+
+    // Lista wszystkich sensorów. Dzięki niej będzie można wykonywać operacje
+    // zbiorczo, na wszystkich sensorach.
+    //
+    private final List<Sensor> sensors = new ArrayList<>();
 
     // Konstruktor klasy Device.
     public Device(String deviceName) {
         super(deviceName);
     }
 
-    // Metoda abstrakcyjna do inicjalizacji urządzenia.
-    public abstract boolean initialize();
+    /**
+     * Metoda inicjalizująca urządzenie.
+     *
+     * @return w tej wersji programu zawsze zwraca true, docelowo ma zwracać
+     * true jeżeli inicjalizacja zakończy się sukcesem, a false jeżeli nie.
+     */
+    public boolean initialize() {
+        return true;
+    }
 
-    // Metoda abstrakcyjna zwracająca listę sensorów urządzenia.
-    public abstract List<Sensor> getSensors();
+    @Override
+    public void close() {
+        for (var sensor : sensors) {
+            sensor.removeAllObservers();
+        }
+        super.close();
+    }
+
+    /**
+     * Metoda zwracająca listę sensorów przypisanych do tego urządzenia.
+     *
+     * @return lista sensorów, tj. obiektów klasy Sensor.
+     */
+    public List<Sensor> getSensors() {
+        //@todo: Jeżeli zwracamy prywatną listę sensorów, to możliwe jest
+        //       zmodyfikowanie tej listy "z zewnątrz" pomimo tego że jest ona
+        //       prywatna. Programowanie defensywne wymagałoby więc zwracania
+        //       sklonowanej kopii listy, ale i wtedy możliwe byłyby efekty
+        //       uboczne, bo przecież obiekty Sensor służyć mają do manipulacji
+        //       sensorami jako hardware.
+        return sensors;
+    }
+
+    public void addSensor(Sensor sensor) {
+        sensors.add(sensor);
+    }
+
+    protected void notifyAllSensorsObservers() {
+        for (var sensor : sensors) {
+            sensor.notifyAllObservers();
+        }
+    }
 }

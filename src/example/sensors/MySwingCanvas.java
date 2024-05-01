@@ -60,8 +60,6 @@ public class MySwingCanvas implements MyCanvas {
             mainWindowFrame.setLayout(new FlowLayout());
             mainWindowFrame.add(jPanel);
             mainWindowFrame.pack();
-            jPanel.revalidate();
-            repaint();
         });
     }
 

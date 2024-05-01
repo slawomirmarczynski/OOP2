@@ -55,6 +55,7 @@ import java.util.jar.JarFile;
  * abstrakcyjnej (bo mamy tylko jedną fabrykę i to nie-abstrakcyjną),
  * ale dość łatwo (w razie potrzeby) można to rozwinąć do fabryki abstrakcyjnej.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ComponentFactory {
 
     // Konfiguracja, na podstawie której będą tworzone obiekty.
@@ -63,7 +64,10 @@ public class ComponentFactory {
     //
     private final Configuration configuration;
 
-    // Potrzebne do procedur weryfikacji podpisów.
+    // Potrzebne do procedur weryfikacji podpisów. Można byłoby umieścić te
+    // zmienne jako zmienne lokalne (co sugeruje IDE Intellij), ale po pierwsze
+    // tu są bardziej widoczne, po drugie oczywiście w wersji "produkcyjnej"
+    // należałoby wybrać inne hasło i zupełnie inaczej je przechowywać itp. itd.
     //
     private final String keyStoreFileName = "myTrustStore.jks"; // w katalogu roboczym
     private final String keyStorePassword = "123456"; // ok, to tylko ćwiczenia

@@ -10,6 +10,7 @@
 
   "routes" : [
     ["dev4b_1.02", "ADXL345",  "console", "log"],
-    ["dev4b_1.02", "BMP180T",  "log", "console"]
+    ["dev4b_1.02", "BMP180T",  "log", "console"],
+    ["dev4b_1.02", "BMP180T",  "plot"]
   ]
 }

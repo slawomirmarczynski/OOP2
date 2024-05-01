@@ -26,42 +26,26 @@
 
 package example.sensors;
 
-import javax.swing.*;
-import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 
-public class SwingGuiConsole implements GuiConsole {
+public class PlotOutput extends Receiver {
 
-    private JTextArea textArea;
-
-    SwingGuiConsole(JFrame frame) {
-        EventQueue.invokeLater(() -> {
-            textArea = new JTextArea(20, 30);
-            textArea.setText("Line 1\nLine 2\nLine 3\n...");
-            JScrollPane scrollPane = new JScrollPane(textArea);
-            frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
-            frame.pack();
-            frame.setVisible(true);
-        });
+    /**
+     * Konstruktor klasy PlotOutput.
+     *
+     * @param name nazwa odbiornika danych, która potem pozwoli zidentyfikować
+     *             ten odbiornik w trakcie konfiguracji łączenia nadawców danych
+     *             takich jak obiekty Sensor z odbiornikami danych takimi jak
+     *             obiekty PlotOutput.
+     */
+    public PlotOutput(String name) throws InterruptedException, InvocationTargetException {
+        super(name);
+        DrawingToolsFactory drawingToolsFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
+        MyCanvas canvas = drawingToolsFactory.createCanvas();
     }
 
     @Override
-    public void clear() {
-        EventQueue.invokeLater(()->textArea.setText(""));
-    }
+    public void update(Sensor sensor) {
 
-    @Override
-    public void print(Object object) {
-        String string = object != null ? object.toString() : "null";
-        EventQueue.invokeLater(()->{
-            textArea.append(string);
-        });
-    }
-
-    @Override
-    public void println(Object object) {
-        String string = object != null ? object.toString() + "\n" : "null\n";
-        EventQueue.invokeLater(()->{
-            textArea.append(string);
-        });
     }
 }
