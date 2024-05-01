@@ -47,18 +47,28 @@ public abstract class Sensor extends Component {
 
     // Metoda usuwająca odbiorcę ze zbioru obserwatorów.
     void removeObserver(Receiver receiver) {
-        observers.remove(receiver);
+        synchronized (this) {
+            observers.remove(receiver);
+        }
     }
 
     // Metoda usuwająca wszystkich obserwatorów.
+    // Ważne: synchronizacja ma chronić przed niejednoznacznością działania
+    //        dwóch wątków, z których jeden informuje prenumeratorów,
+    //        a drugi jednocześnie ich usuwa. Chroni też przed ewentualnym
+    //        usuwaniem usuniętego (gdyby clear() nie była operacją atomową).
     public void removeAllObservers() {
-        observers.clear();
+        synchronized (this) {
+            observers.clear();
+        }
     }
 
     // Metoda powiadamiająca wszystkich obserwatorów o zmianie.
     public void notifyAllObservers() {
-        for (Receiver observer : observers) {
-            observer.update(this);
+        synchronized (this) {
+            for (Receiver observer : observers) {
+                observer.update(this);
+            }
         }
     }
 
