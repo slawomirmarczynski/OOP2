@@ -5,7 +5,8 @@
 
   "receivers": [
     {"name": "console", "type": "ConsoleOutput"},
-    {"name": "log", "type": "LogOutput", "file": "log1.txt"}
+    {"name": "log", "type": "LogOutput", "file": "log1.txt"},
+    {"name": "plot", "type": "PlotOutput"}
   ],
 
   "routes" : [

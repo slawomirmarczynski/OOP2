@@ -210,20 +210,25 @@ public class ComponentFactory {
      */
     private <T> T createPluginComponent(Class<?> classToCreate, String name, String type, Object options)
             throws Exception {
-        //@todo: zabezpieczenie przed iniekcją złośliwego lub niekompatybilnego kodu.
+
+        //@todo: Mechanizm znajdowania pluginów jaki jest poniżej działa całkiem
+        //       nieźle. Jednak zamiast każdorazowo szukać plików JAR (ewentualnie
+        //       CLASS) można zrobić to raz: albo poprzez leniwą inicjalizację,
+        //       albo (jeszcze lepiej) w konstruktorze klasy ComponentFactory.
+
         String packagePrefix = "example.sensors.";
         List<URL> classLoaderURLs = new ArrayList<>();
 
         List<File> directories = new ArrayList<>();
         directories.add(getWorkingDirectory());
         directories.add(getProgramExecutableDirectory());
-        directories.remove(null);
         int n = directories.size();
         for (int i = 0; i < n; i++) {
             File pluginSubdirectory = getPluginSubdirectory(directories.get(i));
-            directories.add(pluginSubdirectory);
+            if (pluginSubdirectory != null) {
+                directories.add(pluginSubdirectory);
+            }
         }
-        directories.remove(null);
 
         for (File directory : directories) {
             //@todo: Pozwalamy ładować pliki CLASS, a to może być problem
@@ -235,16 +240,17 @@ public class ComponentFactory {
             //       - niż trudzić się z wprowadzeniem sprawdzania plików CLASS.
             //       Ale jeżeli nie pozwolimy ładować plików CLASS możemy mieć
             //       utrudnienia w trakcie prac nad programem.
-            //       Podsumowujac: prowizorycznie dopuszczamy ".class", docelowo
-            //       należy fileName.endsWith(".class") usunać.
             //
             //@todo: Jest rzeczą ciekawą, że można zmienić nazwę pliku JAR,
             //       na przykład z myplugin.jar na myplugin.plugin (a nawet
             //       myplugin.jpeg) a i tak URLClassLoader powinien poprawnie
             //       załadować klasy z takiego pliku.
             //
-            File[] jarFiles = directory.listFiles((dir, fileName) ->
-                    fileName.endsWith(".jar") | fileName.endsWith(".class"));
+            boolean UNSAFE_LOAD_FROM_CLASS_FILES = true;
+            if (UNSAFE_LOAD_FROM_CLASS_FILES) {
+                classLoaderURLs.add(directory.toURI().toURL());
+            }
+            File[] jarFiles = directory.listFiles((dir, fileName) -> fileName.endsWith(".jar"));
             if (jarFiles != null) {
                 for (File jarFile : jarFiles) {
                     if (isProperlySignedJar(jarFile)) {
@@ -262,6 +268,17 @@ public class ComponentFactory {
                 // generuje ostrzeżenie “unchecked cast”. Nie jest w stanie
                 // zrozumieć, że rzutowanie jest chronione przez poprzednie
                 // sprawdzenie przez isAssignableFrom().
+                //
+                // Nota bene: jeżeli nie ma odpowiedniego konstruktora,
+                // to powstają błędy trudne to zdiagnozowania. Dynamiczne
+                // ładowanie klas przez URLClassLoader jest sytuacją, w której
+                // kontrola w czasie kompilacji może być trudna do osiągnięcia.
+                // Rozwiązanie z użyciem metody fabrykującej, która rzuca
+                // wyjątek RuntimeException w klasie bazowej, wydaje się być
+                // dobrym podejściem do radzenia sobie z tym wyzwaniem.
+                // Pozwala to na wyraźne sygnalizowanie problemu, jeśli subklasa
+                // nie dostarcza oczekiwanego konstruktora.
+                //
                 @SuppressWarnings("unchecked")
                 Class<T> pluginClass = (Class<T>) loadedClass;
                 Constructor<T> constructor = pluginClass.getConstructor(String.class, Object.class);

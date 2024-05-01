@@ -38,7 +38,7 @@ public class PlotOutput extends Receiver {
      *             takich jak obiekty Sensor z odbiornikami danych takimi jak
      *             obiekty PlotOutput.
      */
-    public PlotOutput(String name) throws InterruptedException, InvocationTargetException {
+    public PlotOutput(String name, Object options) throws InterruptedException, InvocationTargetException {
         super(name);
         DrawingToolsFactory drawingToolsFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
         MyCanvas canvas = drawingToolsFactory.createCanvas();
