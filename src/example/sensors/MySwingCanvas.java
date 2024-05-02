@@ -76,6 +76,25 @@ public class MySwingCanvas implements MyCanvas {
     }
 
     @Override
+    public int getStringWidth(String text) {
+        Font font = graphics.getFont();
+        FontMetrics metrics = graphics.getFontMetrics(font);
+        return metrics.stringWidth(text);
+    }
+
+    @Override
+    public int getStringHeight(String text) {
+        Font font = graphics.getFont();
+        FontMetrics metrics = graphics.getFontMetrics(font);
+        return metrics.getHeight();
+    }
+
+    @Override
+    public void drawString(String string, int x, int y) {
+        graphics.drawString(string, x, y);
+    }
+
+    @Override
     public void repaint() {
         EventQueue.invokeLater(() -> jPanel.repaint());
     }
