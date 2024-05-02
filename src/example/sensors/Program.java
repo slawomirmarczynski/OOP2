@@ -61,7 +61,7 @@ public class Program implements Runnable {
             establishRoutes();
             runDevices();
         } catch (Exception exception) {
-            System.err.println("coś poszło nie tak"); //@todo: lepsza obsługa
+            System.err.println("tym razem coś poszło nie tak"); //@todo: lepsza obsługa
         }
         sleep(10_000);
         closeDevices();

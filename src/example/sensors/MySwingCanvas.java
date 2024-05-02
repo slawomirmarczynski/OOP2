@@ -29,6 +29,7 @@ package example.sensors;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 
 public class MySwingCanvas implements MyCanvas {
 
@@ -55,7 +56,6 @@ public class MySwingCanvas implements MyCanvas {
             Graphics graphics = bufferedImage.getGraphics();
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, width, height);
-            drawLine(0, 0, width, height);
             graphics.dispose();
             mainWindowFrame.setLayout(new FlowLayout());
             mainWindowFrame.add(jPanel);
@@ -64,26 +64,51 @@ public class MySwingCanvas implements MyCanvas {
     }
 
     public void drawLine(int x1, int y1, int x2, int y2) {
-        Graphics graphics = bufferedImage.getGraphics();
-        graphics.setColor(Color.BLACK);
-        graphics.drawLine(x1, y1, x2, y2);
-        graphics.drawLine(x1, y2, x2, y1);
-        graphics.dispose();
+        //EventQueue.invokeLater(()->{});
+        EventQueue.invokeLater(() -> {
+            Graphics graphics = bufferedImage.getGraphics();
+            graphics.setColor(Color.BLACK);
+            graphics.drawLine(x1, y1, x2, y2);
+            graphics.dispose();
+        });
     }
 
     @Override
     public void repaint() {
-        jPanel.repaint();
+        EventQueue.invokeLater(() -> {
+            jPanel.repaint();
+        });
+
     }
 
     @Override
     public int getWidth() {
-        return 0;
+        final int[] width = {0};
+        try {
+            EventQueue.invokeAndWait(() -> {
+                width[0] = jPanel.getWidth();
+            });
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        return width[0];
     }
 
     @Override
     public int getHeight() {
-        return 0;
+        final int[] height = {0};
+        try {
+            EventQueue.invokeAndWait(() -> {
+                height[0] = jPanel.getHeight();
+            });
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        return height[0];
     }
 
 }

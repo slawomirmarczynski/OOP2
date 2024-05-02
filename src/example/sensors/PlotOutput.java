@@ -26,6 +26,7 @@
 
 package example.sensors;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 
 public class PlotOutput extends Receiver {
@@ -40,8 +41,23 @@ public class PlotOutput extends Receiver {
      */
     public PlotOutput(String name, Object options) throws InterruptedException, InvocationTargetException {
         super(name);
+
+        // Tu, w PlotOutput nie możemy używać ani EventQueue.invokeLater(),
+        // ani analogicznych wynalazków powiązanych z konkretną biblioteką
+        // graficzną. Tu mamy być agnostyczni wobec bibliotek, więc tego rodzaju
+        // synchronizację z EDT itp. musimy mieć już załatwioną w subklasie
+        // klasy MyCavanas (np. w MySwingCanvas).
+        //
         DrawingToolsFactory drawingToolsFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
         MyCanvas canvas = drawingToolsFactory.createCanvas();
+
+        //@todo: To powinno być zdecydowanie w innym miejscu, tu jest tylko
+        //       do prób.
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
+        canvas.drawLine(0, 0, width, height);
+        canvas.drawLine(width, 0, 0, height);
+        canvas.repaint();
     }
 
     @Override
