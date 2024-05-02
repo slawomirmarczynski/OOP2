@@ -35,7 +35,7 @@ public class MySwingCanvas implements MyCanvas {
 
     JPanel jPanel;
     BufferedImage bufferedImage;
-    Graphics graphics;
+    Graphics2D graphics;
 
     public MySwingCanvas(JFrame mainWindowFrame) {
         super();
@@ -47,17 +47,36 @@ public class MySwingCanvas implements MyCanvas {
                 jPanel = new JPanel() {
                     @Override
                     protected void paintComponent(Graphics graphics) {
-                        graphics.drawImage(bufferedImage, 0, 0, null);
+                        //graphics.drawImage(bufferedImage, 0, 0, null);
+                        graphics.drawImage(bufferedImage,
+                                0, 0, width, height,
+                                0, 0, 2*width, 2*height,
+                                null);
                     }
                 };
                 jPanel.setPreferredSize(dimension);
                 jPanel.setMinimumSize(dimension);
                 jPanel.setMaximumSize(dimension);
                 jPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-                bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                graphics = bufferedImage.getGraphics();
+                bufferedImage = new BufferedImage(2*width, 2*height, BufferedImage.TYPE_INT_RGB);
+                graphics = (Graphics2D)bufferedImage.getGraphics();
                 graphics.setColor(Color.WHITE);
-                graphics.fillRect(0, 0, width, height);
+                graphics.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
+                graphics.scale(2.0, 2.0);
+
+                // Bez włączenia antyaliasingu obraz nie jest zbyt ładny, włączamy
+                // antyaliasing, co na współczesnych komputerach nie będzie problemem.
+                //
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                graphics.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+                graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+                graphics.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+                graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+                graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                graphics.setRenderingHint(RenderingHints.KEY_TEXT_LCD_CONTRAST, 150);
                 // Dlaczego nie ma tu  graphics.dispose() ?
                 // Bo łatwiej jest mieć cały czas dostępny obiekt graphics,
                 // niż tworzyć go za każdym razem na nowo. Nie jest to kłopotliwe,
@@ -101,12 +120,12 @@ public class MySwingCanvas implements MyCanvas {
 
     @Override
     public int getWidth() {
-        return bufferedImage.getWidth();
+        return bufferedImage.getWidth() / 2;
     }
 
     @Override
     public int getHeight() {
-        return bufferedImage.getHeight();
+        return bufferedImage.getHeight() / 2;
     }
 
     @Override
