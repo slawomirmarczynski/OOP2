@@ -54,7 +54,6 @@ public class SwingDrawingToolsFactory implements DrawingToolsFactory {
 
     @Override
     public MyCanvas createCanvas() {
-        MyCanvas myCanvas = new MySwingCanvas(mainWindowFrame);
-        return myCanvas;
+        return new MySwingCanvas(mainWindowFrame);
     }
 }

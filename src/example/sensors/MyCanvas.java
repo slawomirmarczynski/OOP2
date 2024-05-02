@@ -26,16 +26,17 @@
 
 package example.sensors;
 
+@SuppressWarnings("CommentedOutCode")
 public interface MyCanvas {
     int getWidth();
     int getHeight();
+    void setColor(String colorName);
     void drawLine(int x1, int y1, int x2, int y2);
     void repaint();
 
 //    void moveTo();
 //    void lineTo();
 //    void line(..., ,,, String codedAsInMatlab);
-//    void setColor();
 //    void setLineType(int lineType); //@todo: lub jakoś tak
 //    void getFontSize(int size);
 //    void setFontSize(int size);

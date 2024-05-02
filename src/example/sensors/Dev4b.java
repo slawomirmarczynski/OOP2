@@ -26,9 +26,6 @@
 
 package example.sensors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Klasa Dev4b reprezentuje konkretny typ urządzenia w systemie.
  * <p>

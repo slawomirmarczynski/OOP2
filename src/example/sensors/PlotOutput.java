@@ -26,7 +26,6 @@
 
 package example.sensors;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 
 public class PlotOutput extends Receiver {
@@ -55,7 +54,9 @@ public class PlotOutput extends Receiver {
         //       do prób.
         int width = canvas.getWidth();
         int height = canvas.getHeight();
+        canvas.setColor("blue");
         canvas.drawLine(0, 0, width, height);
+        canvas.setColor("red");
         canvas.drawLine(width, 0, 0, height);
         canvas.repaint();
     }
