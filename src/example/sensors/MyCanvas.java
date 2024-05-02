@@ -26,9 +26,33 @@
 
 package example.sensors;
 
+@SuppressWarnings("CommentedOutCode")
 public interface MyCanvas {
     int getWidth();
     int getHeight();
+    void setColor(String colorName);
     void drawLine(int x1, int y1, int x2, int y2);
     void repaint();
+
+//    void moveTo();
+//    void lineTo();
+//    void line(..., ,,, String codedAsInMatlab);
+//    void setLineType(int lineType); //@todo: lub jakoś tak
+//    void getFontSize(int size);
+//    void setFontSize(int size);
+//    int getTextWidth(String text);
+//    int getTextHeight(String text);
+//    void setTextAnchorLeftCenter(); //@todo: nie wszystkie będą potrzebne?
+//    void setTextAnchorRightCenter();
+//    void setTextAnchorLeftTop();
+//    void setTextAnchorRightTop();
+//    void setTextAnchorLeftBaseline();
+//    void setTextAnchorRightBaseline();
+//    void setTextAnchorLeftBottom();
+//    void setTextAnchorRightBottom();
+//    void drawText(String text);
+//    void setClipRectangle(int x1, int y1, int x2, int y2);
+//    void drawMarker(String codedAsInMatlab);
+//    void setMarkerSize();
+
 }

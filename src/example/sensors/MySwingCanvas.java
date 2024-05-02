@@ -29,61 +29,75 @@ package example.sensors;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 
 public class MySwingCanvas implements MyCanvas {
 
     JPanel jPanel;
     BufferedImage bufferedImage;
+    Graphics graphics;
 
     public MySwingCanvas(JFrame mainWindowFrame) {
         super();
-        EventQueue.invokeLater(() -> {
-            int width = 400;
-            int height = 300;
-            Dimension dimension = new Dimension(width, height);
-            jPanel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics graphics) {
-                    graphics.drawImage(bufferedImage, 0, 0, null);
-                }
-            };
-            jPanel.setPreferredSize(dimension);
-            jPanel.setMinimumSize(dimension);
-            jPanel.setMaximumSize(dimension);
-            jPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-            bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            Graphics graphics = bufferedImage.getGraphics();
-            graphics.setColor(Color.WHITE);
-            graphics.fillRect(0, 0, width, height);
-            drawLine(0, 0, width, height);
-            graphics.dispose();
-            mainWindowFrame.setLayout(new FlowLayout());
-            mainWindowFrame.add(jPanel);
-            mainWindowFrame.pack();
-        });
+        try {
+            EventQueue.invokeAndWait(() -> {
+                int width = 400;
+                int height = 300;
+                Dimension dimension = new Dimension(width, height);
+                jPanel = new JPanel() {
+                    @Override
+                    protected void paintComponent(Graphics graphics) {
+                        graphics.drawImage(bufferedImage, 0, 0, null);
+                    }
+                };
+                jPanel.setPreferredSize(dimension);
+                jPanel.setMinimumSize(dimension);
+                jPanel.setMaximumSize(dimension);
+                jPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+                bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                graphics = bufferedImage.getGraphics();
+                graphics.setColor(Color.WHITE);
+                graphics.fillRect(0, 0, width, height);
+                // Dlaczego nie ma tu  graphics.dispose() ?
+                // Bo łatwiej jest mieć cały czas dostępny obiekt graphics,
+                // niż tworzyć go za każdym razem na nowo. Nie jest to kłopotliwe,
+                // zwłaszcza że obiektów klasy MyCanvas będzie niewiele.
+                mainWindowFrame.setLayout(new FlowLayout());
+                mainWindowFrame.add(jPanel);
+                mainWindowFrame.pack();
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void drawLine(int x1, int y1, int x2, int y2) {
-        Graphics graphics = bufferedImage.getGraphics();
-        graphics.setColor(Color.BLACK);
         graphics.drawLine(x1, y1, x2, y2);
-        graphics.drawLine(x1, y2, x2, y1);
-        graphics.dispose();
     }
 
     @Override
     public void repaint() {
-        jPanel.repaint();
+        EventQueue.invokeLater(() -> jPanel.repaint());
     }
 
     @Override
     public int getWidth() {
-        return 0;
+        return bufferedImage.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return 0;
+        return bufferedImage.getHeight();
     }
 
+    @Override
+    public void setColor(String colorName) {
+        Color color = switch (colorName.toLowerCase()) {
+            case "red" -> Color.RED;
+            case "green" -> Color.GREEN;
+            case "blue" -> Color.BLUE;
+            default -> Color.BLACK;
+        };
+        graphics.setColor(color);
+    }
 }

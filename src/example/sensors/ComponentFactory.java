@@ -247,14 +247,15 @@ public class ComponentFactory {
             //       załadować klasy z takiego pliku.
             //
             boolean UNSAFE_LOAD_FROM_CLASS_FILES = true;
+            //noinspection ConstantValue
             if (UNSAFE_LOAD_FROM_CLASS_FILES) {
                 classLoaderURLs.add(directory.toURI().toURL());
             }
-            File[] jarFiles = directory.listFiles((dir, fileName) -> fileName.endsWith(".jar"));
-            if (jarFiles != null) {
-                for (File jarFile : jarFiles) {
-                    if (isProperlySignedJar(jarFile)) {
-                        classLoaderURLs.add(jarFile.toURI().toURL());
+            File[] pluginFiles = directory.listFiles((dir, fileName) -> fileName.endsWith(".jar"));
+            if (pluginFiles != null) {
+                for (File pluginFile : pluginFiles) {
+                    if (isProperlySignedJar(pluginFile)) {
+                        classLoaderURLs.add(pluginFile.toURI().toURL());
                     }
                 }
             }
@@ -279,10 +280,15 @@ public class ComponentFactory {
                 // Pozwala to na wyraźne sygnalizowanie problemu, jeśli subklasa
                 // nie dostarcza oczekiwanego konstruktora.
                 //
+                System.out.println("<---- dynamic creation starts");
+                System.out.println("pluginClassName = " + pluginClassName);
                 @SuppressWarnings("unchecked")
                 Class<T> pluginClass = (Class<T>) loadedClass;
                 Constructor<T> constructor = pluginClass.getConstructor(String.class, Object.class);
-                return constructor.newInstance(name, options);
+                T newInstance = constructor.newInstance(name, options);
+                System.out.println("ComponentFactory.createPluginComponent");
+                System.out.println("newInstance = " + newInstance);
+                return newInstance;
             } else {
                 throw new ClassCastException("Loaded class " + pluginClassName + " cannot be cast to Class<T>");
             }
@@ -304,8 +310,8 @@ public class ComponentFactory {
      * i zaimportować do keystore myTrustedStore.jks (hasła mogą być oczywiście zupełnie różne,
      * a nawet powinny być różne, tu są jednakowe 123456):
      * <p>
-     * keytool -exportcert -keystore myPrivateKeystore.jks -alias myAlias -file myKey.pub -storepass 123456
-     * keytool -import -keystore myTrustStore.jks -alias myAlias -file myKey.pub -storepass 123456
+     * keytool -exportcert -keystore myPrivateKeystore.jks -alias myAlias -pluginFile myKey.pub -storepass 123456
+     * keytool -import -keystore myTrustStore.jks -alias myAlias -pluginFile myKey.pub -storepass 123456
      * <p>
      * Oczywiście zamiast myPrivateKeystore, myTrustStore, myAlias i myKey można
      * użyć innych nazw. Hasło "123456" jest oczywiście tylko dla przykładu
@@ -317,10 +323,10 @@ public class ComponentFactory {
      * <p>
      * Więcej wskazówek jest w dokumentacji narzędzi keytool i jarsigner.
      *
-     * @param jarFile plik JAR do sprawdzenia.
+     * @param pluginFile plik JAR do sprawdzenia.
      * @return true jeżeli podpisy są dobre, false jeżeli są złe.
      */
-    private boolean isProperlySignedJar(File jarFile) {
+    private boolean isProperlySignedJar(File pluginFile) {
         try {
             // Wczytywanie magazynu kluczy. Taki magazyn może być w pliku JKS,
             // ale może też być przechowywany w katalogu użytkownika, ogólnie
@@ -340,21 +346,22 @@ public class ComponentFactory {
             // musi mieć prawidłowy i ważny podpis. Nieprawidłowy podpis, lub
             // brak podpisu, oznaczają że plik JAR nie może być uznany za dobry.
             //
-            JarFile jar = new JarFile(jarFile);
-            for (JarEntry entry : Collections.list(jar.entries())) {
-                if (entry.isDirectory() == false) { // Przetwarzane są tylko nie-katalogi
-                    jar.getInputStream(entry).readAllBytes();
-                    Certificate[] certificates = entry.getCertificates();
-                    if (certificates == null) {
-                        // Nie ma podpisu? Traktujemy to jako zły podpis.
-                        // Jest to konieczne aby zapobiec ewentualnej próbie
-                        // obejścia, poprzez podłożenie niepodpisanych plików,
-                        // mechanizmu zabezpieczeń.
-                        return false;
-                    }
-                    for (Certificate certificate : certificates) {
-                        PublicKey publicKey = keyStore.getCertificate(keyAlias).getPublicKey();
-                        certificate.verify(publicKey); // zły podpis jest zgłaszany jako wyjątek
+            try(JarFile jar = new JarFile(pluginFile)) {
+                for (JarEntry entry : Collections.list(jar.entries())) {
+                    if (!entry.isDirectory()) { // Przetwarzane są tylko nie-katalogi
+                        jar.getInputStream(entry).readAllBytes();
+                        Certificate[] certificates = entry.getCertificates();
+                        if (certificates == null) {
+                            // Nie ma podpisu? Traktujemy to jako zły podpis.
+                            // Jest to konieczne aby zapobiec ewentualnej próbie
+                            // obejścia, poprzez podłożenie niepodpisanych plików,
+                            // mechanizmu zabezpieczeń.
+                            return false;
+                        }
+                        for (Certificate certificate : certificates) {
+                            PublicKey publicKey = keyStore.getCertificate(keyAlias).getPublicKey();
+                            certificate.verify(publicKey); // zły podpis jest zgłaszany jako wyjątek
+                        }
                     }
                 }
             }
