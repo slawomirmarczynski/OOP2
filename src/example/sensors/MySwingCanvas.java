@@ -153,12 +153,12 @@ public class MySwingCanvas implements MyCanvas {
 
     @Override
     public int getWidth() {
-        return bufferedImage.getWidth() / 2;
+        return jPanel.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return bufferedImage.getHeight() / 2;
+        return jPanel.getHeight();
     }
 
     @Override
