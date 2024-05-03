@@ -90,6 +90,7 @@ public class MySwingCanvas implements MyCanvas {
                 jPanel = new JPanel() {
                     @Override
                     protected void paintComponent(Graphics graphics) {
+                        super.paintComponent(graphics);
                         graphics.drawImage(bufferedImage,
                                 0, 0, panelWidth, panelHeight,
                                 0, 0, bitmapWidth, bitmapHeight,
@@ -99,12 +100,13 @@ public class MySwingCanvas implements MyCanvas {
                 jPanel.setPreferredSize(dimension);
                 jPanel.setMinimumSize(dimension);
                 jPanel.setMaximumSize(dimension);
+                jPanel.setBackground(Color.WHITE);
                 jPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
                 // Oszczędnościowo BufferedImage.TYPE_USHORT_565_RGB
                 bufferedImage = new BufferedImage(bitmapWidth, bitmapHeight, BufferedImage.TYPE_3BYTE_BGR);
                 graphics = (Graphics2D) bufferedImage.getGraphics();
-                graphics.setColor(Color.WHITE);
-                graphics.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
+                graphics.setBackground(Color.WHITE);
+                graphics.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
                 graphics.scale(uiScale, uiScale);
                 adjustRenderingHints(graphics);
                 mainWindowFrame.setLayout(new FlowLayout());
