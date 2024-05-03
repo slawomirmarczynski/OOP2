@@ -58,6 +58,11 @@ public class PlotOutput extends Receiver {
         canvas.drawLine(0, 0, width, height);
         canvas.setColor("red");
         canvas.drawLine(width, 0, 0, height);
+        canvas.setColor("green");
+        String s = "Ala ma kota";
+        canvas.drawString(s,
+                width / 2 - canvas.getStringWidth(s) / 2,
+                height / 2 + canvas.getStringHeight(s) / 2);
         canvas.repaint();
     }
 

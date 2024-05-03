@@ -26,7 +26,14 @@
 
 package example.sensors;
 
+import javax.swing.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
+
 
 /**
  * Klasa Program jest główną klasą programu. Jest ona Runnable, bo aby wyrwać
@@ -56,6 +63,9 @@ public class Program implements Runnable {
 
     @Override
     public void run() {
+
+        setupLookAndFeel();
+
         try {
             createObjects();
             establishRoutes();
@@ -152,5 +162,66 @@ public class Program implements Runnable {
         for (Receiver receiver : receivers) {
             receiver.close();
         }
+    }
+
+    /**
+     * Ustalanie look-and-feel (tzw. laf), czyli jaki mają wygladać kontrolki -
+     * czy mają przypominać te znane z MS Windows, czy raczej takie jakie są na
+     * komputerach Apple, czy może jeszcze inne?!
+     */
+    private void setupLookAndFeel() {
+
+        //@todo: Problem black-hole-decoration-resize jest niemal rozwiązany
+        //       przez FlatLaF.
+//        FlatLightLaf.setup();
+//        if (0 < 1)
+//            return;
+
+        // Tablica zawierająca preferowane i tablica zawierające dostępne LaF.
+        // Są one final, bo nie będą modyfikowane po utworzeniu.
+        //
+        final String[] preferredNames = {"Windows", "Nimbus"}; // @todo: dopisać więcej
+        final UIManager.LookAndFeelInfo[] installed = UIManager.getInstalledLookAndFeels();
+
+        // Negocjowanie jaki LaF ma być użyty - ponieważ dostępnych LaF jest
+        // niewiele (kilka, może kilkanaście) i niewiele jest preferowanych LaF
+        // - to użycie dwóch pętli for (jak poniżej) nie jest aż tak złe... jak
+        // mogłoby się to wydawać. Przechwytywanie wyjątków (try-catch) jest
+        // konieczne, ale - poza odnotowaniem że coś się dzieje - nie wymaga
+        // szczególnych kroków - w najgorszym razie nic się nie uda i pozostanie
+        // standardowy wygląd kontrolek - co jest dobrym rozwiązaniem.
+        //
+        try {
+            for (String bestName : preferredNames) {
+                for (UIManager.LookAndFeelInfo available : installed) {
+                    if (available.getName().equals(bestName)) {
+                        UIManager.setLookAndFeel(available.getClassName());
+                        return;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        /*
+        //
+        // Przygotowanie skalowania FlatLaf, które efektywnie mnoży się przez
+        // skalowanie sun.java2d.uiScale. Nawet jeżeli FlatLaf nie będzie użyty,
+        // to przygotowanie skalowania FlatLaf nie zaszkodzi.
+        //
+        if (System.getProperty("sun.java2d.uiScale", null) == null) {
+            System.setProperty("sun.java2d.uiScale", "100%");
+        }
+        if (System.getProperty("flatlaf.uiScale", null) == null) {
+            System.setProperty("flatlaf.uiScale", "110%");
+        }
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            FlatCyanLightIJTheme.setup();
+        } catch (Exception ignored) {
+        }
+        */
     }
 }

@@ -45,8 +45,18 @@ public class SwingDrawingToolsFactory implements DrawingToolsFactory {
 
     private SwingDrawingToolsFactory() throws InterruptedException, InvocationTargetException {
         EventQueue.invokeAndWait(() -> {
+            JFrame.setDefaultLookAndFeelDecorated(true);
             mainWindowFrame = new JFrame("Program do obsługi sensorów");
+            mainWindowFrame.setUndecorated(false);
+            mainWindowFrame.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
+            mainWindowFrame.getRootPane().setBackground(Color.RED   );
+            mainWindowFrame.getLayeredPane().setBackground(Color.BLUE);
+            mainWindowFrame.getContentPane().setBackground(Color.GREEN);
+            mainWindowFrame.getGlassPane().setBackground(Color.YELLOW);
             mainWindowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            mainWindowFrame.setIgnoreRepaint(true);
+//            mainWindowFrame.setBackground(Color.WHITE);
+//            mainWindowFrame.getContentPane().setBackground(Color.WHITE);
             mainWindowFrame.setSize(640, 480);  // 640x480 to historyczna wartość dla PC
             mainWindowFrame.setVisible(true);
         });

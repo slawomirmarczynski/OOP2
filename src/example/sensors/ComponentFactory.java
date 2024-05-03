@@ -26,8 +26,6 @@
 
 package example.sensors;
 
-import example.classloading.DynamicPathQueries;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
@@ -164,7 +162,7 @@ public class ComponentFactory {
     }
 
     private static File getProgramExecutableDirectory() throws URISyntaxException {
-        ProtectionDomain domain = DynamicPathQueries.class.getProtectionDomain();
+        ProtectionDomain domain = ComponentFactory.class.getProtectionDomain();
         CodeSource codeSource = domain.getCodeSource();
         URL url = codeSource.getLocation();
         URI uri = url.toURI();
