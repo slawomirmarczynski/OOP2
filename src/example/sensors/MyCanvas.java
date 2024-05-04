@@ -30,7 +30,7 @@ package example.sensors;
 public interface MyCanvas {
     int getWidth();
     int getHeight();
-    void setColor(String colorName);
+    void setGraphicsAttributes(String code);
     void drawLine(int x1, int y1, int x2, int y2);
     int getStringWidth(String text);
     int getStringHeight(String text);

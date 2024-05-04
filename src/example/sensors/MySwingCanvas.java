@@ -162,14 +162,9 @@ public class MySwingCanvas implements MyCanvas {
     }
 
     @Override
-    public void setColor(String colorName) {
-        Color color = switch (colorName.toLowerCase()) {
-            case "red" -> Color.RED;
-            case "green" -> Color.GREEN;
-            case "blue" -> Color.BLUE;
-            default -> Color.BLACK;
-        };
-        graphics.setColor(color);
+    public void setGraphicsAttributes(String code) {
+        GraphicsAttributes attributes = new SwingGraphicsAttributes(graphics, code);
+        attributes.useAttributes();
     }
 
     private void adjustRenderingHints(Graphics2D graphics) {

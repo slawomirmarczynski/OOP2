@@ -54,11 +54,11 @@ public class PlotOutput extends Receiver {
         //       do prób.
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-        canvas.setColor("blue");
+        canvas.setGraphicsAttributes("blue");
         canvas.drawLine(0, 0, width, height);
-        canvas.setColor("red");
+        canvas.setGraphicsAttributes("red");
         canvas.drawLine(width, 0, 0, height);
-        canvas.setColor("green");
+        canvas.setGraphicsAttributes("green");
         String s = "Ala ma kota";
         canvas.drawString(s,
                 width / 2 - canvas.getStringWidth(s) / 2,
