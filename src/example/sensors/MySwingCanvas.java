@@ -101,7 +101,12 @@ public class MySwingCanvas implements MyCanvas {
                 jPanel.setMinimumSize(dimension);
                 jPanel.setMaximumSize(dimension);
                 jPanel.setBackground(Color.WHITE);
-                jPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+                Color borderColor = UIManager.getColor("windowBorder");
+                if (borderColor == null) {
+                    borderColor = Color.LIGHT_GRAY;
+                }
+                jPanel.setBorder(BorderFactory.createLineBorder(borderColor));
+                //jPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
                 // Oszczędnościowo BufferedImage.TYPE_USHORT_565_RGB
                 bufferedImage = new BufferedImage(bitmapWidth, bitmapHeight, BufferedImage.TYPE_3BYTE_BGR);
                 graphics = (Graphics2D) bufferedImage.getGraphics();
@@ -128,17 +133,23 @@ public class MySwingCanvas implements MyCanvas {
     }
 
     @Override
+    public int getFontHeight() {
+        Font font = graphics.getFont();
+        FontMetrics metrics = graphics.getFontMetrics(font);
+        return metrics.getHeight();    }
+
+    @Override
+    public int getFontLeading() {
+        Font font = graphics.getFont();
+        FontMetrics metrics = graphics.getFontMetrics(font);
+        return metrics.getLeading();
+    }
+
+    @Override
     public int getStringWidth(String text) {
         Font font = graphics.getFont();
         FontMetrics metrics = graphics.getFontMetrics(font);
         return metrics.stringWidth(text);
-    }
-
-    @Override
-    public int getStringHeight(String text) {
-        Font font = graphics.getFont();
-        FontMetrics metrics = graphics.getFontMetrics(font);
-        return metrics.getHeight();
     }
 
     @Override
@@ -149,6 +160,16 @@ public class MySwingCanvas implements MyCanvas {
     @Override
     public void repaint() {
         EventQueue.invokeLater(() -> jPanel.repaint());
+    }
+
+    @Override
+    public void drawRect(int x1, int y1, int x2, int y2) {
+        graphics.drawRect(x1, y1, x2, y2);
+    }
+
+    @Override
+    public void clipRect(int x1, int y1, int x2, int y2) {
+        graphics.clipRect(x1, y1, x2, y2);
     }
 
     @Override

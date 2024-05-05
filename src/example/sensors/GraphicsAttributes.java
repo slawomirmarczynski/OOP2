@@ -32,31 +32,23 @@ public abstract class GraphicsAttributes {
     final static String[] namesShort = {"r", "g", "b", "k", "m", "c", "y"};
 
     private final String code;
-    private final String lowercaseCode;
-    private String colorBlindCode;
-
     private String colorName;
     private String lineStyle;
-    private String markerStyle;
 
     protected GraphicsAttributes(String code) {
+
         this.code = code;
-        lowercaseCode = code.toLowerCase();
-        colorBlindCode = lowercaseCode;
-        for (String name : namesFull) {
-            colorBlindCode = colorBlindCode.replaceAll(name, "");
-        }
 
         colorName = null;
         for (String name : namesFull) {
-            if (lowercaseCode.contains(name)) {
+            if (code.contains(name)) {
                 colorName = name;
                 break;
             }
         }
         if (colorName == null) {
             for (int i = 0; i < namesShort.length; i++) {
-                if (lowercaseCode.contains(namesShort[i])) {
+                if (code.contains(namesShort[i])) {
                     colorName = namesFull[i];
                     break;
                 }
@@ -76,29 +68,11 @@ public abstract class GraphicsAttributes {
         } else if (code.contains(":")) {
             lineStyle = "dotted";
         }
-
-        markerStyle = "none";
-        if (code.contains(".")) {
-            markerStyle = "dot";
-        } else if (code.contains("o")) {
-            markerStyle = "circle";
-        } else if (code.contains("*")) {
-            markerStyle = "star";
-        } else if (code.contains("+")) {
-            markerStyle = "plus";
-        } else if (code.contains("x")) {
-            markerStyle = "x";
-        } else if (code.contains("s")) {
-            markerStyle = "square";
-        } else if (code.contains("d")) {
-            markerStyle = "diamond";
-        }
     }
 
     public void useAttributes() {
         useColor(colorName);
         useLineStyle(lineStyle);
-        useMarkerStyle(markerStyle);
     }
 
     public void useColor() {
@@ -109,15 +83,9 @@ public abstract class GraphicsAttributes {
         useLineStyle(lineStyle);
     }
 
-    public void useMarkerStyle() {
-        useMarkerStyle(markerStyle);
-    }
-
     protected abstract void useColor(String colorName);
 
     protected abstract void useLineStyle(String lineStyle);
-
-    protected abstract void useMarkerStyle(String markerStyle);
 
     public String getColorName() {
         return colorName;
@@ -125,9 +93,5 @@ public abstract class GraphicsAttributes {
 
     public String getLineStyle() {
         return lineStyle;
-    }
-
-    public String getMarkerStyle() {
-        return markerStyle;
     }
 }

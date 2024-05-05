@@ -26,9 +26,44 @@
 
 package example.sensors;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class PlotOutput extends Receiver {
+
+    // Dlaczego to są finalne pola statyczne klasy, a nie zmienne lokalne metody
+    // paintComponent? W przyszłości planujemy możliwość automatycznego
+    // ustalania jak duże mają być marginesy i ewentualnie ich zmiany w razie
+    // potrzeby. To oznacza że powstaną metody takie jak setTopMargin itp.
+    //
+    private final static int topMargin = 50;
+    private final static int bottomMargin = 50;
+    private final static int leftMargin = 80;
+    private final static int rightMargin = 50;
+
+    // Wykres zawiera dwie osie - jedną odciętych, drugą rzędnych.
+    //
+    final XAxis xAxis = new XAxis();
+    final YAxis yAxis = new YAxis();
+    final Plotter plotter = new AdvancedPlotter();
+
+    // Dane do wykreślania są gromadzone na liście.
+    //
+    // Uwaga: obecna wersja programu ma mechanizmy dodawania danych do listy,
+    //        ale nie ma mechanizmów usuwania tych danych z listy. Oczywiście
+    //        tę niedogodność można łatwo usunąć.
+    //
+    final List<PlotDataSet> dataSets = new ArrayList<>();
+
+    // Nazwa całego wykresu jest tu. Nazwy osi są w obiektach xAxis i yAxis.
+    // Lepiej dać pusty łańcuch znaków niż null, bo null wymagałby odrębnego
+    // sprawdzania, a pusty łańcuch znaków może (powinien) być bezpiecznie
+    // rysowany zawsze.
+    //
+    private String title = "title";
 
     /**
      * Konstruktor klasy PlotOutput.
@@ -50,21 +85,44 @@ public class PlotOutput extends Receiver {
         DrawingToolsFactory drawingToolsFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
         MyCanvas canvas = drawingToolsFactory.createCanvas();
 
-        //@todo: To powinno być zdecydowanie w innym miejscu, tu jest tylko
-        //       do prób.
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-        canvas.setGraphicsAttributes("blue");
-        canvas.drawLine(0, 0, width, height);
-        canvas.setGraphicsAttributes("red");
-        canvas.drawLine(width, 0, 0, height);
-        canvas.setGraphicsAttributes("green");
-        String s = "Ala ma kota";
-        canvas.drawString(s,
-                width / 2 - canvas.getStringWidth(s) / 2,
-                height / 2 + canvas.getStringHeight(s) / 2);
-        canvas.repaint();
+        // @todo: dla niewielkich rozmiarów okna możliwe jest aby client_width
+        //        i/lub client_height były ujemne, co doprowadzi do dziwacznych
+        //        rezultatów - należałoby temu przeciwdziałać.
+        //
+        final int client_width = canvas.getWidth() - leftMargin - rightMargin;
+        final int client_height = canvas.getHeight() - topMargin - bottomMargin;
+        final int xOffset = leftMargin;
+        final int yOffset = topMargin + client_height;
+        final int fontHeight = canvas.getFontHeight();
+        final int leading = canvas.getFontLeading();
+
+        // Rysowanie osi. Ponieważ osie rysujemy na początku, to efektywnie
+        // będą one "na spodzie" wykresu.
+        //
+        //@todo - ZROBIĆ!
+//        xAxis.paint(canvas, xOffset, yOffset, client_width, client_height);
+//        yAxis.paint(canvas, xOffset, yOffset, client_width, client_height);
+
+        // Rysowanie tytułu wykresu.
+        //
+        final int titleWidth = canvas.getStringWidth(title);
+        final int centered = xOffset + (client_width - titleWidth) / 2;
+        final int above = yOffset - client_height - fontHeight - leading;
+        canvas.drawString(title, centered, above);
+
+        // Rysowanie danych poprzedzone zawężeniem obszaru przycinania tak,
+        // aby wypadał on wyłącznie wewnątrz osi współrzędnych.
+        //
+        canvas.drawRect(leftMargin, topMargin, client_width, client_height);
+        canvas.clipRect(leftMargin, topMargin, client_width, client_height);
+
+//@todo: to tu niepotrzebne!
+//        for (PlotDataSet data : dataSets) {
+//            plotter.paint(canvas, xAxis, yAxis, data);
+//        }
     }
+
+
 
     @Override
     public void update(Sensor sensor) {

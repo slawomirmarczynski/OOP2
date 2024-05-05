@@ -24,19 +24,22 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package example.sensors;
+import java.awt.Color;
+import java.util.*;
+import javax.swing.UIManager;
 
-@SuppressWarnings("CommentedOutCode")
-public interface MyCanvas {
-    int getWidth();
-    int getHeight();
-    void setGraphicsAttributes(String code);
-    void drawLine(int x1, int y1, int x2, int y2);
-    int getFontHeight();
-    int getFontLeading();
-    int getStringWidth(String text);
-    void drawString(String text, int x, int y);
-    void repaint();
-    void drawRect(int x1, int y1, int x2, int y2);
-    void clipRect(int x1, int y1, int x2, int y2);;
+public class UIManagerColorKeys {
+    public static void main(String[] args) {
+        List<String> colorKeys = new ArrayList<>();
+        Set<Map.Entry<Object, Object>> entries = UIManager.getLookAndFeelDefaults().entrySet();
+        for (Map.Entry<Object, Object> entry : entries) {
+            if (entry.getValue() instanceof Color) {
+                colorKeys.add((String) entry.getKey());
+            }
+        }
+        Collections.sort(colorKeys);
+        for (String colorKey : colorKeys) {
+            System.out.println(colorKey);
+        }
+    }
 }

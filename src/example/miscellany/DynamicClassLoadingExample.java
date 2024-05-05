@@ -24,7 +24,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package example.classloading;
+package example.miscellany;
 
 import example.sensors.Receiver;
 

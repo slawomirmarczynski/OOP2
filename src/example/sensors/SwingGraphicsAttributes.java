@@ -65,9 +65,4 @@ public class SwingGraphicsAttributes extends GraphicsAttributes {
         };
         graphics.setStroke(stroke);
     }
-
-    @Override
-    protected void useMarkerStyle(String markerStyle) {
-        //@todo: ???
-    }
 }

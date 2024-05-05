@@ -28,19 +28,17 @@ import java.util.List;
 /**
  * Klasa reprezentująca zestaw danych, jakie mają być pokazywane na wykresie.
  * <p>
- * Każdy zestaw składa się z ciągu odciętych i ciągu rzędnych oraz określenia
- * koloru w jakim te dane mają być wykreślane. Oczywiście jest to tylko przykład
- * i dlatego brak w nim możliwości, które mogłyby być konieczne np. dla osób
- * mających trudności z rozpoznawaniem kolorów.
+ * Każdy zestaw składa się z ciągu odciętych i ciągu rzędnych oraz
+ * nazwy opisujacej te dane i określenia sposobu wykreślania.
  */
-public class DataSet {
+public class PlotDataSet {
 
     private final String name;
     private final String code;
-    private final List<Double> x = new ArrayList<>();
-    private final List<Double> y = new ArrayList<>();
+    private final List xValues = new ArrayList();
+    private final List yValues = new ArrayList();
 
-    public DataSet(String name, String code) {
+    public PlotDataSet(String name, String code) {
         this.name = name;
         this.code = code;
     }
@@ -51,7 +49,7 @@ public class DataSet {
      * @return liczba punktów danych.
      */
     public int getNumberOfDataPoints() {
-        return x.size();
+        return xValues.size();
     }
 
     /**
@@ -60,8 +58,8 @@ public class DataSet {
      * @param index numer wierzchołka łamanej, zaczynając od zera.
      * @return wartość odciętej
      */
-    public double getX(int index) {
-        return x.get(index);
+    public Object getX(int index) {
+        return xValues.get(index);
     }
 
     /**
@@ -70,8 +68,8 @@ public class DataSet {
      * @param index numer wierzchołka łamanej, zaczynając od zera.
      * @return wartość rzędnej.
      */
-    public double getY(int index) {
-        return y.get(index);
+    public Object getY(int index) {
+        return yValues.get(index);
     }
 
     public String getName() {
@@ -88,5 +86,15 @@ public class DataSet {
      */
     public String getCode() {
         return code;
+    }
+
+    public void append(Object x, Object y) {
+        xValues.add(x);
+        yValues.add(y);
+    }
+
+    public void clear() {
+        xValues.clear();
+        yValues.clear();
     }
 }
