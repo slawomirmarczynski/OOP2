@@ -23,8 +23,6 @@
 
 package example.sensors;
 
-import java.awt.*;
-
 public class XAxis extends Axis {
 
     public int valueToPixel(double value) {

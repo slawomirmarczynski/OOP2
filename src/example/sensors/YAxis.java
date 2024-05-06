@@ -23,8 +23,6 @@
 
 package example.sensors;
 
-import java.awt.*;
-
 public class YAxis extends Axis {
 
     public int valueToPixel(double value) {
@@ -79,11 +77,8 @@ public class YAxis extends Axis {
 
         canvas.drawLine(xOffset, yOffset, xOffset, yOffset - height);
 
-//        final int xPivot = fontHeight + leading;
-//        final int yPivot = yOffset - (height - labelWidth) / 2;
-//        Graphics2D rotated_graphics = (Graphics2D) graphics.create();
-//        rotated_graphics.rotate(Math.toRadians(-90.0), xPivot, yPivot);
-//        rotated_graphics.drawString(label, xPivot, yPivot);
-//        rotated_graphics.dispose();
+        final int xPivot = fontHeight + leading;
+        final int yPivot = yOffset - (height - labelWidth) / 2;
+        canvas.drawStringRotated(label, xPivot, yPivot);
     }
 }

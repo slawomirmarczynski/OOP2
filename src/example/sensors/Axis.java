@@ -23,8 +23,6 @@
 
 package example.sensors;
 
-import java.awt.*;
-
 /**
  * Axis jest ogólnie osią liczbową, bez określania jeszcze czy jest to oś
  * odciętych, czy oś rzędnych. Niektóre rzeczy najprościej robić zupełnie
@@ -42,7 +40,7 @@ public abstract class Axis {
     protected double minorStep = majorStep / 10.0;  // skok podziałki drobnej
     protected int decimalDigits = 2; // liczba cyfr znaczących
 
-    protected String label = ""; // opis osi, lepiej domyślny pusty niż null
+    protected String label = "label"; // opis osi, lepiej domyślny pusty niż null
 
     protected double offset; // w pikselach
     protected double length; // w pikselach

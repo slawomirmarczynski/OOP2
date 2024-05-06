@@ -26,7 +26,6 @@
 
 package example.sensors;
 
-@SuppressWarnings("CommentedOutCode")
 public interface MyCanvas {
     int getWidth();
     int getHeight();
@@ -38,7 +37,8 @@ public interface MyCanvas {
     int getFontLeading();
     int getStringWidth(String text);
     void drawString(String text, int x, int y);
+    void drawStringRotated(String text, int x, int y);
     void repaint();
     void drawRect(int x1, int y1, int x2, int y2);
-    void clipRect(int x1, int y1, int x2, int y2);;
+    void clipRect(int x1, int y1, int x2, int y2);
 }

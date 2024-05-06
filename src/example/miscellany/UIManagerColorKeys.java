@@ -24,9 +24,12 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.awt.Color;
+package example.miscellany;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 import java.util.*;
-import javax.swing.UIManager;
 
 public class UIManagerColorKeys {
     public static void main(String[] args) {

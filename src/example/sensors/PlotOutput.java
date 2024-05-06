@@ -61,7 +61,7 @@ public class PlotOutput extends Receiver {
     // sprawdzania, a pusty łańcuch znaków może (powinien) być bezpiecznie
     // rysowany zawsze.
     //
-    private String title = "title";
+    private final String title = "title";
 
     /**
      * Konstruktor klasy PlotOutput.

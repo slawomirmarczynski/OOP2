@@ -172,6 +172,14 @@ public class MySwingCanvas implements MyCanvas {
     }
 
     @Override
+    public void drawStringRotated(String text, int x, int y) {
+        Graphics2D rotated_graphics = (Graphics2D) graphics.create();
+        rotated_graphics.rotate(Math.toRadians(-90.0), x, y);
+        rotated_graphics.drawString(text, x, y);
+        rotated_graphics.dispose();
+    }
+
+    @Override
     public void repaint() {
         EventQueue.invokeLater(() -> jPanel.repaint());
     }
