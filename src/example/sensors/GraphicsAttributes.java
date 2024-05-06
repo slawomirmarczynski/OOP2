@@ -28,7 +28,7 @@ package example.sensors;
 
 public abstract class GraphicsAttributes {
 
-    final static String[] namesFull = {"red", "green", "blue", "black", "magenta", "cyan", "yellow"};
+    final static String[] namesFull = {"red", "green", "blue", "black", "magenta", "cyan", "yellow", "lightgray", "gray", "darkgray"};
     final static String[] namesShort = {"r", "g", "b", "k", "m", "c", "y"};
 
     private final String code;

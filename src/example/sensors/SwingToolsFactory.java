@@ -30,20 +30,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 
-public class SwingDrawingToolsFactory implements DrawingToolsFactory {
+public class SwingToolsFactory implements ToolsFactory {
 
-    private static SwingDrawingToolsFactory swingDrawingToolsFactory = null;
+    private static SwingToolsFactory swingDrawingToolsFactory = null;
     private JFrame mainWindowFrame;
 
-    public static synchronized SwingDrawingToolsFactory getInstanceDrawingToolsFactory()
+    public static synchronized SwingToolsFactory getInstanceDrawingToolsFactory()
             throws InterruptedException, InvocationTargetException {
         if (swingDrawingToolsFactory == null) {
-            swingDrawingToolsFactory = new SwingDrawingToolsFactory();
+            swingDrawingToolsFactory = new SwingToolsFactory();
         }
         return swingDrawingToolsFactory;
     }
 
-    private SwingDrawingToolsFactory() throws InterruptedException, InvocationTargetException {
+    private SwingToolsFactory() throws InterruptedException, InvocationTargetException {
         EventQueue.invokeAndWait(() -> {
 //            JFrame.setDefaultLookAndFeelDecorated(true);
             mainWindowFrame = new JFrame("Program do obsługi sensorów");

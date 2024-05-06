@@ -26,6 +26,6 @@
 
 package example.sensors;
 
-public interface DrawingToolsFactory {
+public interface ToolsFactory {
     MyCanvas createCanvas();
 }

@@ -26,10 +26,8 @@
 
 package example.sensors;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class PlotOutput extends Receiver {
@@ -82,7 +80,7 @@ public class PlotOutput extends Receiver {
         // synchronizację z EDT itp. musimy mieć już załatwioną w subklasie
         // klasy MyCavanas (np. w MySwingCanvas).
         //
-        DrawingToolsFactory drawingToolsFactory = SwingDrawingToolsFactory.getInstanceDrawingToolsFactory();
+        ToolsFactory drawingToolsFactory = SwingToolsFactory.getInstanceDrawingToolsFactory();
         MyCanvas canvas = drawingToolsFactory.createCanvas();
 
         // @todo: dla niewielkich rozmiarów okna możliwe jest aby client_width
@@ -99,7 +97,6 @@ public class PlotOutput extends Receiver {
         // Rysowanie osi. Ponieważ osie rysujemy na początku, to efektywnie
         // będą one "na spodzie" wykresu.
         //
-        //@todo - ZROBIĆ!
         xAxis.paint(canvas, xOffset, yOffset, client_width, client_height);
         yAxis.paint(canvas, xOffset, yOffset, client_width, client_height);
 

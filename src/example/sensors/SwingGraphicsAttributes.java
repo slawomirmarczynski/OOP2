@@ -46,6 +46,9 @@ public class SwingGraphicsAttributes extends GraphicsAttributes {
             case "magenta" -> Color.MAGENTA;
             case "cyan" -> Color.CYAN;
             case "yellow" -> Color.YELLOW;
+            case "lightgray" -> Color.LIGHT_GRAY;
+            case "gray" -> Color.GRAY;
+            case "darkgray" -> Color.DARK_GRAY;
 //            case "black" -> Color.BLACK;
             default -> Color.BLACK;
         };
@@ -54,12 +57,12 @@ public class SwingGraphicsAttributes extends GraphicsAttributes {
 
     @Override
     protected void useLineStyle(String lineStyle) {
-        int strokeWidth = 2;
+        int strokeWidth = 1;
         Stroke stroke = switch (lineStyle) {
 //            case "solid" -> new BasicStroke(strokeWidth);
-            case "dashed" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{10, 10}, 0);
-            case "dotted" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{2, 10}, 0);
-            case "dashed-dotted" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{10, 10, 2, 10}, 0);
+            case "dashed" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5, 2}, 0);
+            case "dotted" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{1, 1}, 0);
+            case "dashed-dotted" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5, 2, 1, 2}, 0);
             case "none" -> new BasicStroke(0);
             default -> new BasicStroke(strokeWidth);
         };

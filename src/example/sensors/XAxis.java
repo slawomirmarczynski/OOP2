@@ -44,13 +44,13 @@ public class XAxis extends Axis {
         double value;
 
         value = min + minorStep;
-        canvas.setGraphicsAttributes("black-"); //@todo: LIGHT_GRAY
+        canvas.setGraphicsAttributes("lightgray:");
         while (value <= max) {
             int p = valueToPixel(value);
             canvas.drawLine(p, yOffset, p, yOffset - height);
             value += minorStep;
         }
-        //canvas.setColor(Color.GRAY); //@todo: GRAY
+        canvas.setGraphicsAttributes("gray-");
         value = min + majorStep;
         while (value <= max) {
             int p = valueToPixel(value);
