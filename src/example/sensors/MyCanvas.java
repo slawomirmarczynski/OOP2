@@ -39,6 +39,6 @@ public interface MyCanvas {
     void drawString(String text, int x, int y);
     void drawStringRotated(String text, int x, int y);
     void repaint();
-    void drawRect(int x1, int y1, int x2, int y2);
-    void clipRect(int x1, int y1, int x2, int y2);
+    void drawRect(int x, int y, int width, int height);
+    void setClip(int x, int y, int width, int height);
 }

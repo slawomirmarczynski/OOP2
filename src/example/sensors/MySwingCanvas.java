@@ -185,13 +185,13 @@ public class MySwingCanvas implements MyCanvas {
     }
 
     @Override
-    public void drawRect(int x1, int y1, int x2, int y2) {
-        graphics.drawRect(x1, y1, x2, y2);
+    public void drawRect(int x, int y, int width, int height) {
+        graphics.drawRect(x, y, width, height);
     }
 
     @Override
-    public void clipRect(int x1, int y1, int x2, int y2) {
-        graphics.clipRect(x1, y1, x2, y2);
+    public void setClip(int x, int y, int width, int height) {
+        graphics.setClip(x, y, width, height);
     }
 
     @Override

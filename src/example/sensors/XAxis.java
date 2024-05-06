@@ -48,7 +48,7 @@ public class XAxis extends Axis {
             canvas.drawLine(p, yOffset, p, yOffset - height);
             value += minorStep;
         }
-        canvas.setGraphicsAttributes("gray-");
+        canvas.setGraphicsAttributes("gray--");
         value = min + majorStep;
         while (value <= max) {
             int p = valueToPixel(value);

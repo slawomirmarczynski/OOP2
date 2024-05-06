@@ -29,6 +29,7 @@ package example.sensors;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class PlotOutput extends Receiver {
 
@@ -62,6 +63,7 @@ public class PlotOutput extends Receiver {
     // rysowany zawsze.
     //
     private final String title = "title";
+    private final MyCanvas canvas;
 
     /**
      * Konstruktor klasy PlotOutput.
@@ -81,7 +83,7 @@ public class PlotOutput extends Receiver {
         // klasy MyCavanas (np. w MySwingCanvas).
         //
         ToolsFactory drawingToolsFactory = SwingToolsFactory.getInstanceDrawingToolsFactory();
-        MyCanvas canvas = drawingToolsFactory.createCanvas();
+        canvas = drawingToolsFactory.createCanvas();
 
         // @todo: dla niewielkich rozmiarów okna możliwe jest aby client_width
         //        i/lub client_height były ujemne, co doprowadzi do dziwacznych
@@ -113,7 +115,7 @@ public class PlotOutput extends Receiver {
         // aby wypadał on wyłącznie wewnątrz osi współrzędnych.
         //
         canvas.drawRect(leftMargin, topMargin, client_width, client_height);
-        canvas.clipRect(leftMargin, topMargin, client_width, client_height);
+        canvas.setClip(leftMargin, topMargin, client_width, client_height);
 
 //@todo: to tu niepotrzebne!
 //        for (PlotDataSet data : dataSets) {
@@ -122,9 +124,28 @@ public class PlotOutput extends Receiver {
     }
 
 
+    private Random random = new Random();
+    private double t = 0.0;
 
     @Override
     public void update(Sensor sensor) {
 
+        Object value = sensor.getValue();
+        if (value instanceof Double) {
+            double temp = (double) value;
+            temp = (temp - 293);
+            int x = xAxis.valueToPixel(temp);
+            int y = yAxis.valueToPixel(temp);
+            canvas.setGraphicsAttributes("red-");
+            canvas.drawRect(x, y, 3, 3);
+        }
+
+        double x_random = random.nextDouble() * 10.0;
+        double y_random = random.nextDouble() * 10.0;
+        int x = xAxis.valueToPixel(x_random);
+        int y = yAxis.valueToPixel(y_random);
+        canvas.setGraphicsAttributes("blue-");
+        canvas.drawRect(x, y, 3, 3);
+        canvas.repaint();
     }
 }

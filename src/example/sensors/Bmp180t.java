@@ -26,14 +26,18 @@
 
 package example.sensors;
 
+import java.util.Random;
+
 public class Bmp180t extends Sensor {
     public Bmp180t(String name) {
         super(name);
     }
 
+    Random random = new Random();
+
     @Override
     public Double getValue() {
-        return 293.0;
+        return 293.0 + random.nextDouble() * 10;
     }
 
     @Override
