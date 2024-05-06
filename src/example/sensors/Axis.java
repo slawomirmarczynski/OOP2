@@ -47,19 +47,6 @@ public abstract class Axis {
     protected double offset; // w pikselach
     protected double length; // w pikselach
 
-    // Te pola są problematyczne bo z punktu widzenia czystości architektury,
-    // choć byłoby to wbrew zasadzie DRY, powinny być definiowane w subklasach
-    // klasy Axis, a nie w samej klasie Axis. Są one bowiem potrzebne wyłącznie
-    // dla konkretnych sposobów rysowania osi, czyli ogólnie są niepotrzebne
-    // w superklasie. Z drugiej strony przerzucenie ich do superklasy (podobnie
-    // jak pól offset i length) skraca i upraszcza kod klas XAxis i YAxis (choć
-    // dla jakiejś ZAxis czy HexAxis mogłyby być zbędne i niewystarczające).
-    //
-    // Ciekawe jest też wyjaśnienie po co nam np. pole ascent, skoro łatwo
-    // pozyskać odpowiednią wartość wywołując metrics.getAscent()? Wyjaśnienie
-    // jest trywialnie proste: chcemy w bardziej czytelny sposób zapisywać
-
-    protected FontMetrics metrics;
     protected int fontHeight;
     protected int ascent;
     protected int descent;
@@ -80,18 +67,17 @@ public abstract class Axis {
      * współrzędnych i rozmiary ramki wykresu są przekazywane bezpośrednio
      * jako parametry wywołania.
      *
-     * @param graphics kontekst graficzny.
+     * @param canvas na tym rysujemy.
      * @param xOffset położenie początku układu współrzędnych w pikselach.
      * @param yOffset położenie początku układu współrzędnych w pikselach.
      * @param width szerokość wykresu będąca długością osi x.
      * @param height wysokość wykresu będąca długością osi y.
      */
-    public void paint(Graphics graphics, int xOffset, int yOffset, int width, int height){
-        metrics = graphics.getFontMetrics();
-        fontHeight = metrics.getHeight();
-        ascent = metrics.getAscent();
-        descent = metrics.getDescent();
-        leading = metrics.getLeading();
+    public void paint(MyCanvas canvas, int xOffset, int yOffset, int width, int height){
+        fontHeight = canvas.getFontHeight();
+        ascent = canvas.getFontAscent();
+        descent = canvas.getFontDescent();
+        leading = canvas.getFontLeading();
     }
 
     /**

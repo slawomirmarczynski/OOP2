@@ -100,15 +100,17 @@ public class PlotOutput extends Receiver {
         // będą one "na spodzie" wykresu.
         //
         //@todo - ZROBIĆ!
-//        xAxis.paint(canvas, xOffset, yOffset, client_width, client_height);
-//        yAxis.paint(canvas, xOffset, yOffset, client_width, client_height);
+        xAxis.paint(canvas, xOffset, yOffset, client_width, client_height);
+        yAxis.paint(canvas, xOffset, yOffset, client_width, client_height);
 
         // Rysowanie tytułu wykresu.
         //
         final int titleWidth = canvas.getStringWidth(title);
         final int centered = xOffset + (client_width - titleWidth) / 2;
         final int above = yOffset - client_height - fontHeight - leading;
+        canvas.setGraphicsAttributes("black-");
         canvas.drawString(title, centered, above);
+        canvas.repaint();
 
         // Rysowanie danych poprzedzone zawężeniem obszaru przycinania tak,
         // aby wypadał on wyłącznie wewnątrz osi współrzędnych.

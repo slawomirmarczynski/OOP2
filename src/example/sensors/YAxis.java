@@ -32,58 +32,58 @@ public class YAxis extends Axis {
     }
 
     @Override
-    public void paint(Graphics graphics, int xOffset, int yOffset, int width, int height) {
+    public void paint(MyCanvas canvas, int xOffset, int yOffset, int width, int height) {
 
-        super.paint(graphics, xOffset, yOffset, width, height);
+        super.paint(canvas, xOffset, yOffset, width, height);
 
         this.offset = yOffset;
         this.length = height;
 
-        final int labelWidth = metrics.stringWidth(label);
+        final int labelWidth = canvas.getStringWidth(label);
         final String formatString = "%." + decimalDigits + "f";
         double value;
 
         value = min + minorStep;
-        graphics.setColor(Color.LIGHT_GRAY);
+        canvas.setGraphicsAttributes("black-"); //Color(Color.LIGHT_GRAY);
         while (value <= max) {
             int q = valueToPixel(value);
-            graphics.drawLine(xOffset, q, xOffset + width, q);
+            canvas.drawLine(xOffset, q, xOffset + width, q);
             value += minorStep;
         }
         value = min + majorStep;
-        graphics.setColor(Color.GRAY);
+        //canvas.setColor(Color.GRAY);
         while (value <= max) {
             int q = valueToPixel(value);
-            graphics.drawLine(xOffset, q, xOffset + width, q);
+            canvas.drawLine(xOffset, q, xOffset + width, q);
             value += majorStep;
         }
 
-        graphics.setColor(Color.BLACK);
+        //canvas.setColor(Color.BLACK);
         value = min;
         while (value <= max) {
             int q = valueToPixel(value);
-            graphics.drawLine(xOffset, q, xOffset - MINOR_TICK_SIZE, q);
+            canvas.drawLine(xOffset, q, xOffset - MINOR_TICK_SIZE, q);
             value += minorStep;
         }
         value = min;
         while (value <= max) {
             int q = valueToPixel(value);
-            graphics.drawLine(xOffset, q, xOffset - MAJOR_TICK_SIZE, q);
+            canvas.drawLine(xOffset, q, xOffset - MAJOR_TICK_SIZE, q);
             String tickLabel = String.format(formatString, value);
-            int stringWidth = metrics.stringWidth(tickLabel);
+            int stringWidth = canvas.getStringWidth(tickLabel);
             int x = xOffset - stringWidth - MAJOR_TICK_SIZE - MINOR_TICK_SIZE;
             int y = q + ascent / 2 - 1;
-            graphics.drawString(tickLabel, x, y);
+            canvas.drawString(tickLabel, x, y);
             value += majorStep;
         }
 
-        graphics.drawLine(xOffset, yOffset, xOffset, yOffset - height);
+        canvas.drawLine(xOffset, yOffset, xOffset, yOffset - height);
 
-        final int xPivot = fontHeight + leading;
-        final int yPivot = yOffset - (height - labelWidth) / 2;
-        Graphics2D rotated_graphics = (Graphics2D) graphics.create();
-        rotated_graphics.rotate(Math.toRadians(-90.0), xPivot, yPivot);
-        rotated_graphics.drawString(label, xPivot, yPivot);
-        rotated_graphics.dispose();
+//        final int xPivot = fontHeight + leading;
+//        final int yPivot = yOffset - (height - labelWidth) / 2;
+//        Graphics2D rotated_graphics = (Graphics2D) graphics.create();
+//        rotated_graphics.rotate(Math.toRadians(-90.0), xPivot, yPivot);
+//        rotated_graphics.drawString(label, xPivot, yPivot);
+//        rotated_graphics.dispose();
     }
 }

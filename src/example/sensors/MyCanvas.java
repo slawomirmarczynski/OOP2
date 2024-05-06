@@ -33,6 +33,8 @@ public interface MyCanvas {
     void setGraphicsAttributes(String code);
     void drawLine(int x1, int y1, int x2, int y2);
     int getFontHeight();
+    int getFontAscent();
+    int getFontDescent();
     int getFontLeading();
     int getStringWidth(String text);
     void drawString(String text, int x, int y);

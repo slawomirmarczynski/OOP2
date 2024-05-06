@@ -139,6 +139,20 @@ public class MySwingCanvas implements MyCanvas {
         return metrics.getHeight();    }
 
     @Override
+    public int getFontAscent() {
+        Font font = graphics.getFont();
+        FontMetrics metrics = graphics.getFontMetrics(font);
+        return metrics.getAscent();
+    }
+
+    @Override
+    public int getFontDescent() {
+        Font font = graphics.getFont();
+        FontMetrics metrics = graphics.getFontMetrics(font);
+        return metrics.getDescent();
+    }
+
+    @Override
     public int getFontLeading() {
         Font font = graphics.getFont();
         FontMetrics metrics = graphics.getFontMetrics(font);

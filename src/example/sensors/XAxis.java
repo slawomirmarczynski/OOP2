@@ -31,54 +31,54 @@ public class XAxis extends Axis {
         return (int) Math.round((value - min) / (max - min) * length + offset);
     }
 
-//    @Override
-    public void paint(Canvas canvas, int xOffset, int yOffset, int width, int height) {
+    @Override
+    public void paint(MyCanvas canvas, int xOffset, int yOffset, int width, int height) {
 
-        super.paint(canvas.getGraphics(), xOffset, yOffset, width, height);
+        super.paint(canvas, xOffset, yOffset, width, height);
 
         this.offset = xOffset;
         this.length = width;
 
-        final int labelWidth = metrics.stringWidth(label);
+        final int labelWidth = canvas.getStringWidth(label);
         final String formatString = "%." + decimalDigits + "f";
         double value;
 
         value = min + minorStep;
-//        canvas.setColor(Color.LIGHT_GRAY);
+        canvas.setGraphicsAttributes("black-"); //@todo: LIGHT_GRAY
         while (value <= max) {
             int p = valueToPixel(value);
-//            graphics.drawLine(p, yOffset, p, yOffset - height);
+            canvas.drawLine(p, yOffset, p, yOffset - height);
             value += minorStep;
         }
-//        canvas.setColor(Color.GRAY);
+        //canvas.setColor(Color.GRAY); //@todo: GRAY
         value = min + majorStep;
         while (value <= max) {
             int p = valueToPixel(value);
-//            graphics.drawLine(p, yOffset, p, yOffset - height);
+            canvas.drawLine(p, yOffset, p, yOffset - height);
             value += majorStep;
         }
 
-//        graphics.setColor(Color.BLACK);
+        canvas.setGraphicsAttributes("black-");
         value = min;
         while (value <= max) {
             int p = valueToPixel(value);
-//            graphics.drawLine(p, yOffset, p, yOffset + MINOR_TICK_SIZE);
+            canvas.drawLine(p, yOffset, p, yOffset + MINOR_TICK_SIZE);
             value += minorStep;
         }
         value = min;
         while (value <= max) {
             int p = valueToPixel(value);
-//            graphics.drawLine(p, yOffset, p, yOffset + MAJOR_TICK_SIZE);
+            canvas.drawLine(p, yOffset, p, yOffset + MAJOR_TICK_SIZE);
             String tickLabel = String.format(formatString, value);
-            int stringWidth = metrics.stringWidth(tickLabel);
-//            graphics.drawString(tickLabel, p - stringWidth / 2, yOffset + MAJOR_TICK_SIZE + ascent);
+            int stringWidth = canvas.getStringWidth(tickLabel);
+            canvas.drawString(tickLabel, p - stringWidth / 2, yOffset + MAJOR_TICK_SIZE + ascent);
             value += majorStep;
         }
 
-//        graphics.drawLine(xOffset, yOffset, xOffset + width, yOffset);
+        canvas.drawLine(xOffset, yOffset, xOffset + width, yOffset);
 
-//        graphics.drawString(label,
-//                xOffset + (width - labelWidth) / 2,
-//                yOffset + fontHeight + ascent + leading + MAJOR_TICK_SIZE);
+        canvas.drawString(label,
+                xOffset + (width - labelWidth) / 2,
+                yOffset + fontHeight + ascent + leading + MAJOR_TICK_SIZE);
     }
 }
