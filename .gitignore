@@ -1,6 +1,8 @@
 misc/
 *.jks
 
+/doc/
+
 ### IntelliJ IDEA ###
 *.iml
 .idea/
