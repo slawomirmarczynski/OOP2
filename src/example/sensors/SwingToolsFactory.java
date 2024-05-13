@@ -32,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class SwingToolsFactory implements ToolsFactory {
 
-    private static SwingToolsFactory swingDrawingToolsFactory = null;
+    private static SwingToolsFactory swingDrawingToolsFactory = null; //@todo: usunąć Drawing z nazwy
     private JFrame mainWindowFrame;
 
     public static synchronized SwingToolsFactory getInstanceDrawingToolsFactory()
