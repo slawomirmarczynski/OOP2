@@ -60,6 +60,8 @@ public abstract class Device extends Component implements Runnable, AutoCloseabl
         super.close();
     }
 
+    @todo addSensor - jako protected
+    
     /**
      * Metoda zwracająca listę sensorów przypisanych do tego urządzenia.
      *
