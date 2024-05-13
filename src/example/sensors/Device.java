@@ -75,10 +75,6 @@ public abstract class Device extends Component implements Runnable, AutoCloseabl
         return sensors;
     }
 
-    public void addSensor(Sensor sensor) {
-        sensors.add(sensor);
-    }
-
     protected void notifyAllSensorsObservers() {
         for (var sensor : sensors) {
             sensor.notifyAllObservers();
