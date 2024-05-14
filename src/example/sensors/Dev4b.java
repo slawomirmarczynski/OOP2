@@ -66,7 +66,7 @@ public class Dev4b extends Device {
                 Thread.sleep(100);
             } catch (InterruptedException ignored) {
             }
-            notifyAllSensorsObservers();
+            notifyAllObservers();
         }
     }
 }

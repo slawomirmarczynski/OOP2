@@ -26,6 +26,35 @@
 
 package example.sensors;
 
-public interface ToolsFactory {
-    MyCanvas createCanvas();
+import javax.swing.*;
+import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
+
+public class SwingCanvasFactory implements CanvasFactory {
+
+    private static SwingCanvasFactory swingToolsFactory = null;
+    private JFrame mainWindowFrame;
+
+    public static synchronized SwingCanvasFactory getInstanceDrawingToolsFactory()
+            throws InterruptedException, InvocationTargetException {
+        if (swingToolsFactory == null) {
+            swingToolsFactory = new SwingCanvasFactory();
+        }
+        return swingToolsFactory;
+    }
+
+    private SwingCanvasFactory() throws InterruptedException, InvocationTargetException {
+        EventQueue.invokeAndWait(() -> {
+            mainWindowFrame = new JFrame("Program do obsługi sensorów");
+            mainWindowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            mainWindowFrame.setSize(640, 480);  // 640x480 to historyczna wartość dla PC
+            mainWindowFrame.setVisible(true);
+        });
+    }
+
+    @Override
+    public MyCanvas createCanvas() {
+        return new MySwingCanvas(mainWindowFrame);
+    }
+
 }

@@ -82,7 +82,7 @@ public class PlotOutput extends Receiver {
         // synchronizację z EDT itp. musimy mieć już załatwioną w subklasie
         // klasy MyCavanas (np. w MySwingCanvas).
         //
-        ToolsFactory drawingToolsFactory = SwingToolsFactory.getInstanceDrawingToolsFactory();
+        CanvasFactory drawingToolsFactory = SwingCanvasFactory.getInstanceDrawingToolsFactory();
         canvas = drawingToolsFactory.createCanvas();
 
         // @todo: dla niewielkich rozmiarów okna możliwe jest aby client_width
