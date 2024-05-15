@@ -195,6 +195,36 @@ public class MySwingCanvas implements MyCanvas {
     }
 
     @Override
+    public void setColor(String colorName) {
+        Color color = switch (colorName) {
+            case "red" -> Color.RED;
+            case "green" -> Color.GREEN;
+            case "blue" -> Color.BLUE;
+            case "magenta" -> Color.MAGENTA;
+            case "cyan" -> Color.CYAN;
+            case "yellow" -> Color.YELLOW;
+            case "lightgray" -> Color.LIGHT_GRAY;
+            case "gray" -> Color.GRAY;
+            case "darkgray" -> Color.DARK_GRAY;
+            default -> Color.BLACK; // to czyni zbędnym "black" -> Color.BLACK;
+        };
+        graphics.setColor(color);
+    }
+
+    @Override
+    public void setLineStyle(String lineStyle) {
+        int strokeWidth = 1;
+        Stroke stroke = switch (lineStyle) {
+            case "dashed" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5, 2}, 0);
+            case "dotted" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{1, 1}, 0);
+            case "dashed-dotted" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5, 2, 1, 2}, 0);
+            case "none" -> new BasicStroke(0);
+            default -> new BasicStroke(strokeWidth); // zawiera case "solid" -> new BasicStroke(strokeWidth);
+        };
+        graphics.setStroke(stroke);
+    }
+
+    @Override
     public int getWidth() {
         return jPanel.getWidth();
     }
@@ -202,12 +232,6 @@ public class MySwingCanvas implements MyCanvas {
     @Override
     public int getHeight() {
         return jPanel.getHeight();
-    }
-
-    @Override
-    public void setGraphicsAttributes(String code) {
-        GraphicsAttributes attributes = new SwingGraphicsAttributes(graphics, code);
-        attributes.useAttributes();
     }
 
     private void adjustRenderingHints(Graphics2D graphics) {

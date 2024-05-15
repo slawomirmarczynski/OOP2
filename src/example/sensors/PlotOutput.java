@@ -107,7 +107,8 @@ public class PlotOutput extends Receiver {
         final int titleWidth = canvas.getStringWidth(title);
         final int centered = xOffset + (client_width - titleWidth) / 2;
         final int above = yOffset - client_height - fontHeight - leading;
-        canvas.setGraphicsAttributes("black-");
+        canvas.setColor("black");
+        canvas.setLineStyle("solid");
         canvas.drawString(title, centered, above);
         canvas.repaint();
 
@@ -136,7 +137,8 @@ public class PlotOutput extends Receiver {
             temp = (temp - 293);
             int x = xAxis.valueToPixel(temp);
             int y = yAxis.valueToPixel(temp);
-            canvas.setGraphicsAttributes("red-");
+            canvas.setColor("red");
+            canvas.setLineStyle("solid");
             canvas.drawRect(x, y, 3, 3);
         }
 
@@ -144,7 +146,8 @@ public class PlotOutput extends Receiver {
         double y_random = random.nextDouble() * 10.0;
         int x = xAxis.valueToPixel(x_random);
         int y = yAxis.valueToPixel(y_random);
-        canvas.setGraphicsAttributes("blue-");
+        canvas.setColor("blue");
+        canvas.setLineStyle("solid");
         canvas.drawRect(x, y, 3, 3);
         canvas.repaint();
     }

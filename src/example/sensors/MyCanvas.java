@@ -29,7 +29,6 @@ package example.sensors;
 public interface MyCanvas {
     int getWidth();
     int getHeight();
-    void setGraphicsAttributes(String code);
     void drawLine(int x1, int y1, int x2, int y2);
     int getFontHeight();
     int getFontAscent();
@@ -41,4 +40,6 @@ public interface MyCanvas {
     void repaint();
     void drawRect(int x, int y, int width, int height);
     void setClip(int x, int y, int width, int height);
+    void setColor(String colorName);
+    void setLineStyle(String lineStyle);
 }

@@ -42,13 +42,15 @@ public class XAxis extends Axis {
         double value;
 
         value = min + minorStep;
-        canvas.setGraphicsAttributes("lightgray:");
+        canvas.setColor("lightgray");
+        canvas.setLineStyle("dotted");
         while (value <= max) {
             int p = valueToPixel(value);
             canvas.drawLine(p, yOffset, p, yOffset - height);
             value += minorStep;
         }
-        canvas.setGraphicsAttributes("gray--");
+        canvas.setColor("gray");
+        canvas.setLineStyle("dashed");
         value = min + majorStep;
         while (value <= max) {
             int p = valueToPixel(value);
@@ -56,7 +58,8 @@ public class XAxis extends Axis {
             value += majorStep;
         }
 
-        canvas.setGraphicsAttributes("black-");
+        canvas.setColor("black");
+        canvas.setLineStyle("solid");
         value = min;
         while (value <= max) {
             int p = valueToPixel(value);

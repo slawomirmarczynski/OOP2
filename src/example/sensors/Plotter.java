@@ -39,7 +39,7 @@ import java.awt.*;
  * modyfikacji kodu starych implementacji tego interfejsu, przez co realizujemy
  * zastadę OCP.
  */
-public interface Plotter {
+public interface Plotter { //@todo: subklasy Plotter oddzielić od Swing i AWT!
 
     /**
      * Rysuje dane używając danych osi współrzędnych.

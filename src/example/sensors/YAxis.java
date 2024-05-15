@@ -42,21 +42,24 @@ public class YAxis extends Axis {
         double value;
 
         value = min + minorStep;
-        canvas.setGraphicsAttributes("lightgray:");
+        canvas.setColor("lightgray");
+        canvas.setLineStyle("dotted");
         while (value <= max) {
             int q = valueToPixel(value);
             canvas.drawLine(xOffset, q, xOffset + width, q);
             value += minorStep;
         }
         value = min + majorStep;
-        canvas.setGraphicsAttributes("gray--");
+        canvas.setColor("gray");
+        canvas.setLineStyle("dashed");
         while (value <= max) {
             int q = valueToPixel(value);
             canvas.drawLine(xOffset, q, xOffset + width, q);
             value += majorStep;
         }
 
-        canvas.setGraphicsAttributes("black-");
+        canvas.setColor("black");
+        canvas.setLineStyle("solid");
         value = min;
         while (value <= max) {
             int q = valueToPixel(value);
