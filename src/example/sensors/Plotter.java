@@ -44,10 +44,10 @@ public interface Plotter { //@todo: subklasy Plotter oddzielić od Swing i AWT!
     /**
      * Rysuje dane używając danych osi współrzędnych.
      *
-     * @param graphics obiekt Graphics jaki dostaje z nadrzędnego paintComponent.
+     * @param canvas obiekt klasy MyCanvas, na którym ma być rysowany wykres.
      * @param xAxis oś odciętych.
      * @param yAxis oś rzędnych.
      * @param data dane (ciąg punktów), jakie mają być wykreślone.
      */
-    void paint(Graphics graphics, Axis xAxis, Axis yAxis, PlotDataSet data);
+    void paint(MyCanvas canvas, Axis xAxis, Axis yAxis, PlotDataSet data);
 }

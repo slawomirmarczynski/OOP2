@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
+import com.formdev.flatlaf.intellijthemes.*;
 
 
 /**
@@ -171,6 +171,20 @@ public class Program implements Runnable {
      */
     private void setupLookAndFeel() {
 
+        if (System.getProperty("sun.java2d.uiScale", null) == null) {
+            System.setProperty("sun.java2d.uiScale", "100%");
+        }
+        if (System.getProperty("flatlaf.uiScale", null) == null) {
+            System.setProperty("flatlaf.uiScale", "110%");
+        }
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            FlatArcOrangeIJTheme.setup();
+        } catch (Exception ignored) {
+        }
+        return;
+
         //@todo: Problem black-hole-decoration-resize jest niemal rozwiązany
         //       przez FlatLaF.
 //        FlatLightLaf.setup();
@@ -180,8 +194,8 @@ public class Program implements Runnable {
         // Tablica zawierająca preferowane i tablica zawierające dostępne LaF.
         // Są one final, bo nie będą modyfikowane po utworzeniu.
         //
-        final String[] preferredNames = {"Windows", "Nimbus"}; // @todo: dopisać więcej
-        final UIManager.LookAndFeelInfo[] installed = UIManager.getInstalledLookAndFeels();
+//        final String[] preferredNames = {"Windows", "Nimbus"}; // @todo: dopisać więcej
+//        final UIManager.LookAndFeelInfo[] installed = UIManager.getInstalledLookAndFeels();
 
         // Negocjowanie jaki LaF ma być użyty - ponieważ dostępnych LaF jest
         // niewiele (kilka, może kilkanaście) i niewiele jest preferowanych LaF
@@ -191,18 +205,18 @@ public class Program implements Runnable {
         // szczególnych kroków - w najgorszym razie nic się nie uda i pozostanie
         // standardowy wygląd kontrolek - co jest dobrym rozwiązaniem.
         //
-        try {
-            for (String bestName : preferredNames) {
-                for (UIManager.LookAndFeelInfo available : installed) {
-                    if (available.getName().equals(bestName)) {
-                        UIManager.setLookAndFeel(available.getClassName());
-                        return;
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            for (String bestName : preferredNames) {
+//                for (UIManager.LookAndFeelInfo available : installed) {
+//                    if (available.getName().equals(bestName)) {
+//                        UIManager.setLookAndFeel(available.getClassName());
+//                        return;
+//                    }
+//                }
+//            }
+//        } catch (Exception ex) {
+//            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         /*
         //

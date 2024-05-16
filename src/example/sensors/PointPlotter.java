@@ -34,58 +34,26 @@ public class PointPlotter implements Plotter {
     /**
      * Rysuje dane jako punkty używając danych osi współrzędnych.
      *
-     * @param graphics obiekt Graphics jaki dostaje z nadrzędnego paintComponent.
+     * @param canvas obiekt Graphics jaki dostaje z nadrzędnego paintComponent.
      * @param xAxis oś odciętych.
      * @param yAxis oś rzędnych.
      * @param data dane (ciąg punktów), jakie mają być wykreślone.
      */
     @Override
-    public void paint(Graphics graphics, Axis xAxis, Axis yAxis, PlotDataSet data) {
-        Graphics2D g2d = (Graphics2D) graphics;
-        final int strokeWidth = 2;
-        g2d.setStroke(new BasicStroke(strokeWidth));
-        Color color = getDatasetColor(data);
+    public void paint(MyCanvas canvas, Axis xAxis, Axis yAxis, PlotDataSet data) {
+        final int RADIUS = 2;
+        final int DIAMETER = 2 * RADIUS;
         final int n = data.getNumberOfDataPoints();
         if (n >= 1) {
             for (int i = 0; i < n; i++) {
                 int x = xAxis.valueToPixel((double)data.getX(i));
                 int y = yAxis.valueToPixel((double)data.getY(i));
-                graphics.setColor(Color.WHITE);
-                final int RADIUS = 2;
-                final int DIAMETER = 2 * RADIUS;
-                graphics.fillOval(x - RADIUS, y - RADIUS, DIAMETER, DIAMETER);
-                graphics.setColor(color);
-                graphics.drawOval(x - RADIUS, y - RADIUS, DIAMETER, DIAMETER);
+                canvas.setColor("white");
+                canvas.fillOval(x - RADIUS, y - RADIUS, DIAMETER, DIAMETER);
+                canvas.setColor(data.getColor());
+                canvas.setLineStyle(data.getLineStyle());
+                canvas.drawOval(x - RADIUS, y - RADIUS, DIAMETER, DIAMETER);
             }
         }
-    }
-
-    /**
-     * Przetwarza kod określający szczegóły wykresu tak, aby wyciągnąć z niego
-     * informację o kolorze.
-     *
-     * @param data zbiór danych
-     * @return wartość koloru
-     */
-    public static Color getDatasetColor(PlotDataSet data) {
-
-        // Wydawać mogłoby się że ta metoda powinna być określona np. w klasie
-        // Plotter jako klasie bazowej. Jednak zdefiniowanie getDatabaseColor
-        // w PointColor jako metody statycznej nie ogranicza możliwości innej
-        // interpretacji w przyszłych implementacjach interfejsu Plotter.
-        // Więc jeżeli dodamy kolejne kolory, to nie musimy nic zmieniać.
-
-        final String[] names = {"r", "g", "b", "k", "m", "c", "y"};
-        final Color[] colors = {Color.RED, Color.GREEN, Color.BLUE,
-                Color.BLACK, Color.MAGENTA, Color.CYAN, Color.YELLOW};
-        final String code = data.getCode();
-        Color color = Color.BLACK;
-        for (int i = 0; i < colors.length; i++) {
-            if (code.contains(names[i])) {
-                color = colors[i];
-                break;
-            }
-        }
-        return color;
     }
 }

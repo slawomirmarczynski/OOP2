@@ -82,8 +82,8 @@ public class MySwingCanvas implements MyCanvas {
 
         try {
             EventQueue.invokeAndWait(() -> {
-                int panelWidth = 400;
-                int panelHeight = 300;
+                int panelWidth = 300;
+                int panelHeight = 200;
                 int bitmapWidth = (int) (panelWidth * uiScale); //@todo: a co jeżeli otrzymamy 0 ?
                 int bitmapHeight = (int) (panelHeight * uiScale); //@todo: a co jeżeli otrzymamy 0 ?
                 Dimension dimension = new Dimension(panelWidth, panelHeight);
@@ -129,6 +129,7 @@ public class MySwingCanvas implements MyCanvas {
     }
 
     public void drawLine(int x1, int y1, int x2, int y2) {
+
         graphics.drawLine(x1, y1, x2, y2);
     }
 

@@ -6,12 +6,14 @@
   "receivers": [
     {"name": "console", "type": "ConsoleOutput"},
     {"name": "log", "type": "LogOutput", "file": "log1.txt"},
-    {"name": "plot", "type": "PlotOutput"}
+    {"name": "plot1", "type": "PlotOutput"},
+    {"name": "plot2", "type": "PlotOutput"}
   ],
 
   "routes" : [
     ["dev4b_1.02", "ADXL345",  "console", "log"],
     ["dev4b_1.02", "BMP180T",  "log", "console"],
-    ["dev4b_1.02", "BMP180T",  "plot"]
+    ["dev4b_1.02", "BMP180T",  "plot1"],
+    ["dev4b_1.02", "BMP180T",  "plot2"]
   ]
 }

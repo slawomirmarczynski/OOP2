@@ -47,7 +47,7 @@ public class PlotOutput extends Receiver {
     //
     final XAxis xAxis = new XAxis();
     final YAxis yAxis = new YAxis();
-    final Plotter plotter = new AdvancedPlotter();
+//    final Plotter plotter = new AdvancedPlotter();
 
     // Dane do wykreślania są gromadzone na liście.
     //
@@ -62,7 +62,7 @@ public class PlotOutput extends Receiver {
     // sprawdzania, a pusty łańcuch znaków może (powinien) być bezpiecznie
     // rysowany zawsze.
     //
-    private final String title = "title";
+    private final String title = "Mój tytuł";
     private final MyCanvas canvas;
 
     /**

@@ -34,13 +34,15 @@ import java.util.List;
 public class PlotDataSet {
 
     private final String name;
-    private final String code;
     private final List xValues = new ArrayList();
     private final List yValues = new ArrayList();
+    private String color;
+    private String lineType;
 
-    public PlotDataSet(String name, String code) {
+    public PlotDataSet(String name, String color, String lineType) {
         this.name = name;
-        this.code = code;
+        this.color = color;
+        this.lineType = lineType;
     }
 
     /**
@@ -76,18 +78,6 @@ public class PlotDataSet {
         return name;
     }
 
-    /**
-     * Zwraca kod, zapisany w łańcuch znaków, określający w jaki sposób należy
-     * wykreślić linię.
-     *
-     * @return kod, np. "r--o" oznacza czerwoną linię kreskowaną z zaznaczonymi
-     *         jako okręgi punktami; kod ten jest zbliżony do tego którego używa
-     *         się w programie Matlab i w bibliotece matplotlib w Pythonie.
-     */
-    public String getCode() {
-        return code;
-    }
-
     public void append(Object x, Object y) {
         xValues.add(x);
         yValues.add(y);
@@ -96,5 +86,13 @@ public class PlotDataSet {
     public void clear() {
         xValues.clear();
         yValues.clear();
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getLineStyle() {
+        return lineType;
     }
 }

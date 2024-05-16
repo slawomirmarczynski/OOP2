@@ -36,13 +36,13 @@ public class LinePlotter implements Plotter {
     /**
      * Rysuje dane jako linie ciągłe o różnych kolorach.
      *
-     * @param graphics obiekt Graphics jaki dostaje z nadrzędnego paintComponent.
+     * @param canvas
      * @param xAxis    oś odciętych.
      * @param yAxis    oś rzędnych.
      * @param data     dane (ciąg punktów), jakie mają być wykreślone.
      */
     @Override
-    public void paint(Graphics graphics, Axis xAxis, Axis yAxis, PlotDataSet data) {
+    public void paint(MyCanvas canvas, Axis xAxis, Axis yAxis, PlotDataSet data) {
 
         // Sprawdzamy, czy mamy dostateczną liczbę punktów. Powinien być
         // przynajmniej jeden, choć lepiej aby było ich więcej.
@@ -52,18 +52,21 @@ public class LinePlotter implements Plotter {
         //
         final int n = data.getNumberOfDataPoints();
         if (n > 0) {
-            Graphics2D g2d = (Graphics2D) graphics;
-            g2d.setColor(PointPlotter.getDatasetColor(data));
-            Path2D path = new Path2D.Float();
-            path.moveTo((double)data.getX(0), (double)data.getY(0));
-            for (int i = 0; i < n; i++) {
-                int x = xAxis.valueToPixel((double)data.getX(i));
-                int y = yAxis.valueToPixel((double)data.getY(i));
-                path.lineTo(x, y);
-            }
-            final int strokeWidth = 2;
-            g2d.setStroke(new BasicStroke(strokeWidth));
-            g2d.draw(path);
+            canvas.setColor(data.getColor());
+            canvas.setLineStyle(data.getLineStyle());
+//@todo:...
+            canvas.drawPolyline(data.getNumberOfDataPoints(), data.getXs(), data.getYs());
+//@todo: -> przenieść do...
+//            Path2D path = new Path2D.Float();
+//            path.moveTo((double)data.getX(0), (double)data.getY(0));
+//            for (int i = 0; i < n; i++) {
+//                int x = xAxis.valueToPixel((double)data.getX(i));
+//                int y = yAxis.valueToPixel((double)data.getY(i));
+//                path.lineTo(x, y);
+//            }
+//            final int strokeWidth = 2;
+//            g2d.setStroke(new BasicStroke(strokeWidth));
+//            g2d.draw(path);
         }
     }
 }
