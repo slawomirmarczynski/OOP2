@@ -42,8 +42,4 @@ public interface MyCanvas {
     void setClip(int x, int y, int width, int height);
     void setColor(String colorName);
     void setLineStyle(String lineStyle);
-
-    void fillOval(int x1, int y1, int x2, int y2);
-    void drawOval(int x1, int y1, int x2, int y2);
-    void drawPolyLine(int n, int[] x, int[] y);
 }

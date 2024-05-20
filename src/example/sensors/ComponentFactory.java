@@ -278,14 +278,10 @@ public class ComponentFactory {
                 // Pozwala to na wyraźne sygnalizowanie problemu, jeśli subklasa
                 // nie dostarcza oczekiwanego konstruktora.
                 //
-                System.out.println("<---- dynamic creation starts");
-                System.out.println("pluginClassName = " + pluginClassName);
                 @SuppressWarnings("unchecked")
                 Class<T> pluginClass = (Class<T>) loadedClass;
                 Constructor<T> constructor = pluginClass.getConstructor(String.class, Object.class);
                 T newInstance = constructor.newInstance(name, options);
-                System.out.println("ComponentFactory.createPluginComponent");
-                System.out.println("newInstance = " + newInstance);
                 return newInstance;
             } else {
                 throw new ClassCastException("Loaded class " + pluginClassName + " cannot be cast to Class<T>");

@@ -58,10 +58,15 @@ poligon do nauki dobrych praktyk.
 
 ## Co jest do zrobienia?
 
+1. Przeniesienie niektórych fragmentów i pluginów do odrębnych pakietów Java.
+   Po to by np. obsługa urządzenia *DEV* była (wraz z kodem dla czujników)
+   w osobnym pakiecie.
+
 1. Taka ciekawostka. Programy w Javie źle współpracują z dekorowaniem okien
    przez MS Windows. Na czym to polega? Jeżeli szybko zmienimy za pomocą myszy
    rozmiar okna programu to zobaczymy jako czarne obszary miejsca w których
    MS Windows już wie że będzie tam okno programu, a Java Swing jeszcze nie.
+   Być może problem ten dotyczy tylko MS Windows 10 i że w Windows 11 jest ok.
 
 2. Graficzny interfejs użytkownika. Być może z możliwością wyboru pomiędzy
    Swing (SWT?) i JavaFX.

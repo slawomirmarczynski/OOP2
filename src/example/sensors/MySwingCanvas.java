@@ -28,7 +28,6 @@ package example.sensors;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 
@@ -225,29 +224,6 @@ public class MySwingCanvas implements MyCanvas {
             default -> new BasicStroke(strokeWidth); // zawiera case "solid" -> new BasicStroke(strokeWidth);
         };
         graphics.setStroke(stroke);
-    }
-
-    @Override
-    public void fillOval(int x, int y, int width, int height) {
-        graphics.fillOval(x, y, width, height);
-    }
-
-    @Override
-    public void drawOval(int x, int y, int width, int height) {
-        graphics.drawOval(x, y, width, height);
-    }
-
-    @Override
-    public void drawPolyLine(int n, int[] x, int[] y) {
-        Path2D path = new Path2D.Float();
-        path.moveTo(x[0], y[0]);
-        for (int i = 0; i < n; i++) {
-            path.lineTo(x[i], y[i]);
-        }
-        final int strokeWidth = 2;
-        // @todo: sprawdzić czy setStroke jest tu potrzebne
-        graphics.setStroke(new BasicStroke(strokeWidth));
-        graphics.draw(path);
     }
 
     @Override

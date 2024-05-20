@@ -47,15 +47,6 @@ public class PlotOutput extends Receiver {
     //
     final XAxis xAxis = new XAxis();
     final YAxis yAxis = new YAxis();
-//    final Plotter plotter = new AdvancedPlotter();
-
-    // Dane do wykreślania są gromadzone na liście.
-    //
-    // Uwaga: obecna wersja programu ma mechanizmy dodawania danych do listy,
-    //        ale nie ma mechanizmów usuwania tych danych z listy. Oczywiście
-    //        tę niedogodność można łatwo usunąć.
-    //
-    final List<PlotDataSet> dataSets = new ArrayList<>();
 
     // Nazwa całego wykresu jest tu. Nazwy osi są w obiektach xAxis i yAxis.
     // Lepiej dać pusty łańcuch znaków niż null, bo null wymagałby odrębnego
