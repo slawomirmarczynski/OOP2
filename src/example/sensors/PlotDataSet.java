@@ -95,4 +95,9 @@ public class PlotDataSet {
     public String getLineStyle() {
         return lineType;
     }
+
+    public Double[] getXs() {
+        List<Double> list = xValues;
+        return list.toArray(new Double[0]);
+    }
 }

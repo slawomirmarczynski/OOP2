@@ -28,6 +28,7 @@ package example.sensors;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 
@@ -91,10 +92,7 @@ public class MySwingCanvas implements MyCanvas {
                     @Override
                     protected void paintComponent(Graphics graphics) {
                         super.paintComponent(graphics);
-                        graphics.drawImage(bufferedImage,
-                                0, 0, panelWidth, panelHeight,
-                                0, 0, bitmapWidth, bitmapHeight,
-                                null);
+                        graphics.drawImage(bufferedImage, 0, 0, panelWidth, panelHeight, 0, 0, bitmapWidth, bitmapHeight, null);
                     }
                 };
                 jPanel.setPreferredSize(dimension);
@@ -137,7 +135,8 @@ public class MySwingCanvas implements MyCanvas {
     public int getFontHeight() {
         Font font = graphics.getFont();
         FontMetrics metrics = graphics.getFontMetrics(font);
-        return metrics.getHeight();    }
+        return metrics.getHeight();
+    }
 
     @Override
     public int getFontAscent() {
@@ -216,13 +215,39 @@ public class MySwingCanvas implements MyCanvas {
     public void setLineStyle(String lineStyle) {
         int strokeWidth = 1;
         Stroke stroke = switch (lineStyle) {
-            case "dashed" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5, 2}, 0);
-            case "dotted" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{1, 1}, 0);
-            case "dashed-dotted" -> new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5, 2, 1, 2}, 0);
+            case "dashed" ->
+                    new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5, 2}, 0);
+            case "dotted" ->
+                    new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{1, 1}, 0);
+            case "dashed-dotted" ->
+                    new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5, 2, 1, 2}, 0);
             case "none" -> new BasicStroke(0);
             default -> new BasicStroke(strokeWidth); // zawiera case "solid" -> new BasicStroke(strokeWidth);
         };
         graphics.setStroke(stroke);
+    }
+
+    @Override
+    public void fillOval(int x, int y, int width, int height) {
+        graphics.fillOval(x, y, width, height);
+    }
+
+    @Override
+    public void drawOval(int x, int y, int width, int height) {
+        graphics.drawOval(x, y, width, height);
+    }
+
+    @Override
+    public void drawPolyLine(int n, int[] x, int[] y) {
+        Path2D path = new Path2D.Float();
+        path.moveTo(x[0], y[0]);
+        for (int i = 0; i < n; i++) {
+            path.lineTo(x[i], y[i]);
+        }
+        final int strokeWidth = 2;
+        // @todo: sprawdzić czy setStroke jest tu potrzebne
+        graphics.setStroke(new BasicStroke(strokeWidth));
+        graphics.draw(path);
     }
 
     @Override
@@ -250,4 +275,6 @@ public class MySwingCanvas implements MyCanvas {
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_LCD_CONTRAST, 150);
     }
+
+
 }
