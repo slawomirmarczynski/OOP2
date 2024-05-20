@@ -12,23 +12,27 @@ poligon do nauki dobrych praktyk.
 
 ## Co już jest zrobione?
 
-1. Nieco rozbudowane jest przekazywanie danych, np. przekazywane są informacje
+1. Grafika - wykresy danych - nie jest jeszcze ukończona
+   i wiele rzeczy wymaga poprawienia (delikatnie ujmując),
+   ale zapowiada się dobrze.
+
+2. Nieco rozbudowane jest przekazywanie danych, np. przekazywane są informacje
    o jednostkach (np. że pomiary są wyrażane w hektopaskalach).
 
-2. Dodane jest sprawdzanie podpisów plików JAR (podpisy self-signed tworzone
+3. Dodane jest sprawdzanie podpisów plików JAR (podpisy self-signed tworzone
    są programami keytool i jarsigner pochodzącymi z JDK).
 
-3. Dynamiczne ładowanie klas jest już zaimplementowane bez mechanizmów
+4. Dynamiczne ładowanie klas jest już zaimplementowane bez mechanizmów
    zabezpieczających.
 
-4. Dodany jest przykład jak pozyskać ścieżki do katalogu roboczego, katalogu
+5. Dodany jest przykład jak pozyskać ścieżki do katalogu roboczego, katalogu
    użytkownika itp. 
 
-5. Dodany jest przykład dynamicznego ładowania klas i wywoływania ich metod.
+6. Dodany jest przykład dynamicznego ładowania klas i wywoływania ich metod.
    Posłuży on do opracowania takiego sposobu ładowania sensorów i odbiorców
    danych, aby uczynić z nich łatwo konfigurowalne pluginy.
 
-6. Uprościliśmy znacznie kod źródłowy poprzez rezygnację z odrębnych klas
+7. Uprościliśmy znacznie kod źródłowy poprzez rezygnację z odrębnych klas
    Sensor i Sink. Połączyliśmy je w jedną klasę Component. Ale okazało się to za
    dużym uproszczeniem. Dlatego wprowadziliśmy więcej klas i klasy abstrakcyjne.
    Mamy abstrakcyjne klasy Device, Sensor i Receiver.
@@ -39,18 +43,18 @@ poligon do nauki dobrych praktyk.
      parametrze fizycznym, takim jak ciśnienie, temperatura, przyspieszenie.
    - Receiver jest czymś, co jest odbiorcą-konsumentem danych.
 
-7. Mamy sposób na powiązanie sensorów z komponentami będącymi odbiorcami danych:
+8. Mamy sposób na powiązanie sensorów z komponentami będącymi odbiorcami danych:
    stosujemy wzorzec obserwator.
 
-8. Dzięki użyciu fabryki obiektów (klasa *ComponentFactory*) oddzieliliśmy tworzenie
+9. Dzięki użyciu fabryki obiektów (klasa *ComponentFactory*) oddzieliliśmy tworzenie
    obiektów od samych obiektów.
 
-9. Mamy skuteczny sposób na czytanie konfiguracji z pliku tekstowego w formacie
-   JSON. Format JSON wydaje się nieco łatwiejszy do zrozumienia i użycia niż XML,
-   TOML czy YAML. YAML jest co prawda równie czytelny jak JSON, ale zadecydowała
-   łatwa dostępność i prostota użycia biblioteki GSON (do czytania plików)
-   oraz fakt, iż pliki YAML są mniej odporne na przypadkowe modyfikacje (takie jak
-   wstawienie dodatkowych spacji) niż pliki JSON.
+10. Mamy skuteczny sposób na czytanie konfiguracji z pliku tekstowego w formacie
+    JSON. Format JSON wydaje się nieco łatwiejszy do zrozumienia i użycia niż XML,
+    TOML czy YAML. YAML jest co prawda równie czytelny jak JSON, ale zadecydowała
+    łatwa dostępność i prostota użycia biblioteki GSON (do czytania plików)
+    oraz fakt, iż pliki YAML są mniej odporne na przypadkowe modyfikacje (takie jak
+    wstawienie dodatkowych spacji) niż pliki JSON.
 
 ## Co jest do zrobienia?
 
