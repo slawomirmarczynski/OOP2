@@ -24,7 +24,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package example.sensors;
+package example.sensors.dev4b;
+
+import example.sensors.*;
 
 /**
  * Klasa Dev4b reprezentuje konkretny typ urządzenia w systemie.
@@ -45,7 +47,6 @@ public class Dev4b extends Device {
         // używanie tych zmiennych jeszcze gdzie indziej, poza konstruktorem,
         // ale na razie jest to niepotrzebne.
         //
-        //@todo: fix thermometr->thermometer
         Sensor accelerometer = new Adxl345("ADXL345");
         Sensor manometer = new Bmp180p("BMP180P");
         Sensor thermometer = new Bmp180t("BMP180T");

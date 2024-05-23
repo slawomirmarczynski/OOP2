@@ -1,6 +1,6 @@
 {
   "devices": [
-    {"name": "dev4b_1.02", "type": "Dev4b"}
+    {"name": "dev4b_1.02", "type": "dev4b.Dev4b"}
   ],
 
   "receivers": [
