@@ -39,7 +39,24 @@ import example.sensors.*;
  */
 public class Dev4b extends Device {
 
-    // Konstruktor klasy Dev4b.
+    private Adxl345 accelerometer;
+    private Bmp180p manometer;
+    private Bmp180t thermometer;
+
+    /**
+     * Konstruktor klasy Dev4b.
+     *
+     * Każde urządzenie musi mieć konstruktor mający dokładnie dwa parametry:
+     * nazwę, pod jaką będzie rozpoznawane urządzenie i obiekt klasy Object
+     * (lub subklasy klasy Object), w którym są pozostałe opcje potrzebne
+     * do stworzenia obiektu-urządzenia. W ten sposób zostaje osiągnięta pełna
+     * elastyczność - w Javie każdy klasa jest subklasą klasy Object, mamy
+     * swobodę w określeniu czym będzie drugi parametr.
+     *
+     * @param name nazwa urządzenia jako komponentu.
+     * @param ignoredOptions ten parametr jest tym razem ignorowany, ale musi
+     *                       być, bo program oczekuje że taki parametr będzie.
+     */
     public Dev4b(String name, Object ignoredOptions) {
         super(name);
 
@@ -47,9 +64,9 @@ public class Dev4b extends Device {
         // używanie tych zmiennych jeszcze gdzie indziej, poza konstruktorem,
         // ale na razie jest to niepotrzebne.
         //
-        Sensor accelerometer = new Adxl345("ADXL345");
-        Sensor manometer = new Bmp180p("BMP180P");
-        Sensor thermometer = new Bmp180t("BMP180T");
+        accelerometer = new Adxl345("ADXL345");
+        manometer = new Bmp180p("BMP180P");
+        thermometer = new Bmp180t("BMP180T");
         addSensor(accelerometer);
         addSensor(manometer);
         addSensor(thermometer);
@@ -65,6 +82,9 @@ public class Dev4b extends Device {
         //       koncepcji działania mechanizmów przekazywania danych.
         for (int i = 0; i < 100; i++) {
             try {
+                accelerometer.setDemoAcceleration();
+                manometer.setDemoPressure();
+                thermometer.setDemoRandomTemperature();
                 Thread.sleep(100);
             } catch (InterruptedException ignored) {
             }

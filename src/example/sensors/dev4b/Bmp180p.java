@@ -48,4 +48,12 @@ public class Bmp180p extends Sensor {
     public String getPhysicalUnit() {
         return "Pa";
     }
+
+    @Override
+    public long getTimeStamp() {
+        return 0;
+    }
+
+    public void setDemoPressure() {
+    }
 }

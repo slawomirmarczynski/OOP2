@@ -31,15 +31,18 @@ import example.sensors.Sensor;
 import java.util.Random;
 
 public class Bmp180t extends Sensor {
+
+    private double temperature;
+    Random random = new Random(); //@todo: random powinien być globalnym singletonem.
+
     public Bmp180t(String name) {
         super(name);
     }
 
-    Random random = new Random();
 
     @Override
     public Double getValue() {
-        return 293.0 + random.nextDouble() * 10;
+        return temperature;
     }
 
     @Override
@@ -50,5 +53,10 @@ public class Bmp180t extends Sensor {
     @Override
     public String getPhysicalUnit() {
         return "°C";
+    }
+
+    public void setDemoRandomTemperature() {
+        temperature = 273.15 + 20.0 + 5 * random.nextDouble();
+        setTimeStamp(System.currentTimeMillis());
     }
 }

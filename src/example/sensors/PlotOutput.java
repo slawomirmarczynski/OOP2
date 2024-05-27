@@ -27,8 +27,6 @@
 package example.sensors;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class PlotOutput extends Receiver {
@@ -55,6 +53,8 @@ public class PlotOutput extends Receiver {
     //
     private final String title = "Mój tytuł";
     private final MyCanvas canvas;
+    private Random random = new Random();
+    private double t = 0.0;
 
     /**
      * Konstruktor klasy PlotOutput.
@@ -114,10 +114,6 @@ public class PlotOutput extends Receiver {
 //            plotter.paint(canvas, xAxis, yAxis, data);
 //        }
     }
-
-
-    private Random random = new Random();
-    private double t = 0.0;
 
     @Override
     public void update(Sensor sensor) {

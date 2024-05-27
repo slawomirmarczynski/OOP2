@@ -49,4 +49,14 @@ public class Adxl345 extends Sensor {
         return "m/s**2";
     }
 
+    @Override
+    public long getTimeStamp() {
+        return 0;
+    }
+
+    public void run() {
+    }
+
+    public void setDemoAcceleration() {
+    }
 }
